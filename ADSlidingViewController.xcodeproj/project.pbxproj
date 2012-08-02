@@ -10,7 +10,30 @@
 		A2C5265015CA8166007DB2B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5264F15CA8166007DB2B9 /* Foundation.framework */; };
 		A2C5265515CA8166007DB2B9 /* ADSlidingViewController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A2C5265415CA8166007DB2B9 /* ADSlidingViewController.h */; };
 		A2C5265715CA8166007DB2B9 /* ADSlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C5265615CA8166007DB2B9 /* ADSlidingViewController.m */; };
+		A2C5265E15CA81AA007DB2B9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5265D15CA81AA007DB2B9 /* UIKit.framework */; };
+		A2C5266515CA81DF007DB2B9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5265D15CA81AA007DB2B9 /* UIKit.framework */; };
+		A2C5266615CA81DF007DB2B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5264F15CA8166007DB2B9 /* Foundation.framework */; };
+		A2C5266815CA81DF007DB2B9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5266715CA81DF007DB2B9 /* CoreGraphics.framework */; };
+		A2C5266E15CA81DF007DB2B9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A2C5266C15CA81DF007DB2B9 /* InfoPlist.strings */; };
+		A2C5267015CA81DF007DB2B9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C5266F15CA81DF007DB2B9 /* main.m */; };
+		A2C5267415CA81DF007DB2B9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C5267315CA81DF007DB2B9 /* AppDelegate.m */; };
+		A2C5267715CA81DF007DB2B9 /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2C5267515CA81DF007DB2B9 /* MainStoryboard_iPhone.storyboard */; };
+		A2C5267A15CA81DF007DB2B9 /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2C5267815CA81DF007DB2B9 /* MainStoryboard_iPad.storyboard */; };
+		A2C5267D15CA81DF007DB2B9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C5267C15CA81DF007DB2B9 /* ViewController.m */; };
+		A2C5268315CA81FA007DB2B9 /* libADSlidingViewController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5264C15CA8166007DB2B9 /* libADSlidingViewController.a */; };
+		A2C526A015CAA14C007DB2B9 /* SlidingViews.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A2C5269F15CAA14C007DB2B9 /* SlidingViews.storyboard */; };
+		A2C526A315CAA2F4007DB2B9 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C526A215CAA2F3007DB2B9 /* MainViewController.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		A2C5268115CA81F6007DB2B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A2C5264315CA8166007DB2B9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A2C5264B15CA8166007DB2B9;
+			remoteInfo = ADSlidingViewController;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		A2C5264A15CA8166007DB2B9 /* CopyFiles */ = {
@@ -31,6 +54,22 @@
 		A2C5265315CA8166007DB2B9 /* ADSlidingViewController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ADSlidingViewController-Prefix.pch"; sourceTree = "<group>"; };
 		A2C5265415CA8166007DB2B9 /* ADSlidingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ADSlidingViewController.h; sourceTree = "<group>"; };
 		A2C5265615CA8166007DB2B9 /* ADSlidingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ADSlidingViewController.m; sourceTree = "<group>"; };
+		A2C5265D15CA81AA007DB2B9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		A2C5266315CA81DF007DB2B9 /* ADSlidingViewControllerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ADSlidingViewControllerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2C5266715CA81DF007DB2B9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		A2C5266B15CA81DF007DB2B9 /* ADSlidingViewControllerDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ADSlidingViewControllerDemo-Info.plist"; sourceTree = "<group>"; };
+		A2C5266D15CA81DF007DB2B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A2C5266F15CA81DF007DB2B9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		A2C5267115CA81DF007DB2B9 /* ADSlidingViewControllerDemo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ADSlidingViewControllerDemo-Prefix.pch"; sourceTree = "<group>"; };
+		A2C5267215CA81DF007DB2B9 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		A2C5267315CA81DF007DB2B9 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		A2C5267615CA81DF007DB2B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPhone.storyboard; sourceTree = "<group>"; };
+		A2C5267915CA81DF007DB2B9 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
+		A2C5267B15CA81DF007DB2B9 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		A2C5267C15CA81DF007DB2B9 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		A2C5269F15CAA14C007DB2B9 /* SlidingViews.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = SlidingViews.storyboard; sourceTree = "<group>"; };
+		A2C526A115CAA2F3007DB2B9 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		A2C526A215CAA2F3007DB2B9 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +77,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2C5265E15CA81AA007DB2B9 /* UIKit.framework in Frameworks */,
 				A2C5265015CA8166007DB2B9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A2C5266015CA81DF007DB2B9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2C5268315CA81FA007DB2B9 /* libADSlidingViewController.a in Frameworks */,
+				A2C5266515CA81DF007DB2B9 /* UIKit.framework in Frameworks */,
+				A2C5266615CA81DF007DB2B9 /* Foundation.framework in Frameworks */,
+				A2C5266815CA81DF007DB2B9 /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				A2C5265115CA8166007DB2B9 /* ADSlidingViewController */,
+				A2C5266915CA81DF007DB2B9 /* ADSlidingViewControllerDemo */,
 				A2C5264E15CA8166007DB2B9 /* Frameworks */,
 				A2C5264D15CA8166007DB2B9 /* Products */,
 			);
@@ -58,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				A2C5264C15CA8166007DB2B9 /* libADSlidingViewController.a */,
+				A2C5266315CA81DF007DB2B9 /* ADSlidingViewControllerDemo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -66,6 +119,8 @@
 			isa = PBXGroup;
 			children = (
 				A2C5264F15CA8166007DB2B9 /* Foundation.framework */,
+				A2C5265D15CA81AA007DB2B9 /* UIKit.framework */,
+				A2C5266715CA81DF007DB2B9 /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -84,6 +139,34 @@
 			isa = PBXGroup;
 			children = (
 				A2C5265315CA8166007DB2B9 /* ADSlidingViewController-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A2C5266915CA81DF007DB2B9 /* ADSlidingViewControllerDemo */ = {
+			isa = PBXGroup;
+			children = (
+				A2C5267215CA81DF007DB2B9 /* AppDelegate.h */,
+				A2C5267315CA81DF007DB2B9 /* AppDelegate.m */,
+				A2C5267515CA81DF007DB2B9 /* MainStoryboard_iPhone.storyboard */,
+				A2C5267815CA81DF007DB2B9 /* MainStoryboard_iPad.storyboard */,
+				A2C5267B15CA81DF007DB2B9 /* ViewController.h */,
+				A2C5267C15CA81DF007DB2B9 /* ViewController.m */,
+				A2C5266A15CA81DF007DB2B9 /* Supporting Files */,
+				A2C5269F15CAA14C007DB2B9 /* SlidingViews.storyboard */,
+				A2C526A115CAA2F3007DB2B9 /* MainViewController.h */,
+				A2C526A215CAA2F3007DB2B9 /* MainViewController.m */,
+			);
+			path = ADSlidingViewControllerDemo;
+			sourceTree = "<group>";
+		};
+		A2C5266A15CA81DF007DB2B9 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A2C5266B15CA81DF007DB2B9 /* ADSlidingViewControllerDemo-Info.plist */,
+				A2C5266C15CA81DF007DB2B9 /* InfoPlist.strings */,
+				A2C5266F15CA81DF007DB2B9 /* main.m */,
+				A2C5267115CA81DF007DB2B9 /* ADSlidingViewControllerDemo-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -108,6 +191,24 @@
 			productReference = A2C5264C15CA8166007DB2B9 /* libADSlidingViewController.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		A2C5266215CA81DF007DB2B9 /* ADSlidingViewControllerDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2C5267E15CA81DF007DB2B9 /* Build configuration list for PBXNativeTarget "ADSlidingViewControllerDemo" */;
+			buildPhases = (
+				A2C5265F15CA81DF007DB2B9 /* Sources */,
+				A2C5266015CA81DF007DB2B9 /* Frameworks */,
+				A2C5266115CA81DF007DB2B9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A2C5268215CA81F6007DB2B9 /* PBXTargetDependency */,
+			);
+			name = ADSlidingViewControllerDemo;
+			productName = ADSlidingViewControllerDemo;
+			productReference = A2C5266315CA81DF007DB2B9 /* ADSlidingViewControllerDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -130,9 +231,24 @@
 			projectRoot = "";
 			targets = (
 				A2C5264B15CA8166007DB2B9 /* ADSlidingViewController */,
+				A2C5266215CA81DF007DB2B9 /* ADSlidingViewControllerDemo */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A2C5266115CA81DF007DB2B9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2C5266E15CA81DF007DB2B9 /* InfoPlist.strings in Resources */,
+				A2C5267715CA81DF007DB2B9 /* MainStoryboard_iPhone.storyboard in Resources */,
+				A2C5267A15CA81DF007DB2B9 /* MainStoryboard_iPad.storyboard in Resources */,
+				A2C526A015CAA14C007DB2B9 /* SlidingViews.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A2C5264815CA8166007DB2B9 /* Sources */ = {
@@ -143,7 +259,53 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A2C5265F15CA81DF007DB2B9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A2C5267015CA81DF007DB2B9 /* main.m in Sources */,
+				A2C5267415CA81DF007DB2B9 /* AppDelegate.m in Sources */,
+				A2C5267D15CA81DF007DB2B9 /* ViewController.m in Sources */,
+				A2C526A315CAA2F4007DB2B9 /* MainViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A2C5268215CA81F6007DB2B9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A2C5264B15CA8166007DB2B9 /* ADSlidingViewController */;
+			targetProxy = A2C5268115CA81F6007DB2B9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		A2C5266C15CA81DF007DB2B9 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A2C5266D15CA81DF007DB2B9 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		A2C5267515CA81DF007DB2B9 /* MainStoryboard_iPhone.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A2C5267615CA81DF007DB2B9 /* en */,
+			);
+			name = MainStoryboard_iPhone.storyboard;
+			sourceTree = "<group>";
+		};
+		A2C5267815CA81DF007DB2B9 /* MainStoryboard_iPad.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A2C5267915CA81DF007DB2B9 /* en */,
+			);
+			name = MainStoryboard_iPad.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		A2C5265815CA8166007DB2B9 /* Debug */ = {
@@ -166,7 +328,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -184,7 +346,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -214,6 +376,45 @@
 			};
 			name = Release;
 		};
+		A2C5267F15CA81DF007DB2B9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ADSlidingViewControllerDemo/ADSlidingViewControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "ADSlidingViewControllerDemo/ADSlidingViewControllerDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		A2C5268015CA81DF007DB2B9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ADSlidingViewControllerDemo/ADSlidingViewControllerDemo-Prefix.pch";
+				INFOPLIST_FILE = "ADSlidingViewControllerDemo/ADSlidingViewControllerDemo-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -231,6 +432,14 @@
 			buildConfigurations = (
 				A2C5265B15CA8166007DB2B9 /* Debug */,
 				A2C5265C15CA8166007DB2B9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		A2C5267E15CA81DF007DB2B9 /* Build configuration list for PBXNativeTarget "ADSlidingViewControllerDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2C5267F15CA81DF007DB2B9 /* Debug */,
+				A2C5268015CA81DF007DB2B9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
