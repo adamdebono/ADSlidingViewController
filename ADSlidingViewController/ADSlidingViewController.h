@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 	ADUndersidePersistencyTypeAlways = 2
 };
 
-/* Reset Methods */
+/* Reset Strategies */
 typedef NS_ENUM(NSInteger, ADResetStrategy) {
 	ADResetStrategyNone = 0,
 	ADResetStrategyTapping = 1 << 0,
@@ -82,7 +82,12 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 @property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
 @property (nonatomic) ADResetStrategy resetStrategy;
 
-@property BOOL shouldAllowInteractionsWhenAnchored;
+@property CGFloat elasticityAmount;
+
+@property BOOL mainViewShouldAllowInteractionsWhenAnchored;
+
+/* UI Properties */
+@property (nonatomic) BOOL showTopViewShadow;
 
 /* Methods */
 
