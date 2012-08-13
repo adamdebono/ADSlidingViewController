@@ -44,7 +44,8 @@
 static const CGFloat kADDefaultAnchorAmount = 300.0f;
 static const ADAnchorWidthType kADDefaultAnchorWidthType = ADAnchorWidthTypePeek;
 static const ADAnchorLayoutType kADDefaultAnchorLayoutType = ADAnchorLayoutTypeSlide;
-static const ADUndersidePersistencyType kADDDefaultUndersidePersistencyType = ADUndersidePersistencyTypeNone;
+static const ADUndersidePersistencyType kADDefaultUndersidePersistencyType = ADUndersidePersistencyTypeNone;
+static const ADSecondaryLayoutType kADDefaultSecondaryLayoutType = ADSecondaryLayoutTypeUnderneath;
 
 /* Constants */
 static const CGFloat kADViewAnimationTime = 0.3f;
@@ -71,16 +72,19 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 - (void)load {
 	/* Setup Default Values */
-	_leftAnchorAmount = kADDefaultAnchorAmount;
-	_rightAnchorAmount = kADDefaultAnchorAmount;
+	_leftViewAnchorWidth = kADDefaultAnchorAmount;
+	_rightViewAnchorWidth = kADDefaultAnchorAmount;
 	
-	_leftAnchorWidthType = kADDefaultAnchorWidthType;
-	_rightAnchorWidthType = kADDefaultAnchorWidthType;
+	_leftViewAnchorWidthType = kADDefaultAnchorWidthType;
+	_rightViewAnchorWidthType = kADDefaultAnchorWidthType;
 	
-	_leftAnchorLayoutType = kADDefaultAnchorLayoutType;
-	_rightAnchorLayoutType = kADDefaultAnchorLayoutType;
+	_leftViewAnchorLayoutType = kADDefaultAnchorLayoutType;
+	_rightViewAnchorLayoutType = kADDefaultAnchorLayoutType;
 	
-	_undersidePersistencyType = kADDDefaultUndersidePersistencyType;
+	_leftViewSecondaryLayoutType = kADDefaultSecondaryLayoutType;
+	_rightViewSecondaryLayoutType = kADDefaultSecondaryLayoutType;
+	
+	_undersidePersistencyType = kADDefaultUndersidePersistencyType;
 	_resetStrategy = ADResetStrategyTapping | ADResetStrategyPanning;
 	
 	_shouldAllowInteractionsWhenAnchored = NO;
@@ -90,17 +94,24 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	
+	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
-	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-	[super viewWillAppear:animated];
 	
-	//shadow
+	/* Key-Value Observation */
+	[self addObserver:self forKeyPath:@"leftViewAnchorWidth" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"rightViewAnchorWidth" options:NSKeyValueObservingOptionNew context:nil];
 	
-	//[self updateLayout];
+	[self addObserver:self forKeyPath:@"leftViewAnchorWidthType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"rightViewAnchorWidthType" options:NSKeyValueObservingOptionNew context:nil];
+	
+	[self addObserver:self forKeyPath:@"leftViewAnchorLayoutType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"rightViewAnchorLayoutType" options:NSKeyValueObservingOptionNew context:nil];
+	
+	[self addObserver:self forKeyPath:@"leftViewSecondaryLayoutType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"rightViewSecondaryLayoutType" options:NSKeyValueObservingOptionNew context:nil];
+	
+	[self addObserver:self forKeyPath:@"undersidePersistencyType" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
@@ -192,6 +203,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 #pragma mark - Layout Setters
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+	NSLog(@"%@", keyPath);
+	
+	[self updateLayout];
+}
+
 - (void)setResetStrategy:(ADResetStrategy)resetStrategy {
 	_resetStrategy = resetStrategy;
 	
@@ -261,9 +278,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 #pragma mark - Laying out
 - (void)updateLayout {
-	[self updateMainViewLayout];
 	[self updateLeftViewLayout];
 	[self updateRightViewLayout];
+	[self updateMainViewLayout];
 }
 
 - (void)updateMainViewLayout {
@@ -276,26 +293,26 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if ([self anchoredToSide] == ADAnchorSideCenter) {
 		newCenter = horizontalCenter;
 		resetTapEnabled = NO;
-	} else if ([self anchoredToSide] == ADAnchorSideLeft) {//showing the right side
+	} else if ([self anchoredToSide] == ADAnchorSideLeft) {//showing the left side
 		CGFloat distance = 0;
-		switch ([self leftAnchorWidthType]) {
+		switch ([self rightViewAnchorWidthType]) {
 			case ADAnchorWidthTypePeek:
-				distance = [[[self mainViewController] view] frame].size.width - [self leftAnchorAmount];
+				distance = [[[self mainViewController] view] frame].size.width - [self rightViewAnchorWidth];
 				break;
 			case ADAnchorWidthTypeReveal:
-				distance = [self leftAnchorAmount];
+				distance = [self rightViewAnchorWidth];
 				break;
 		}
 		newCenter = horizontalCenter - distance;
 		resetTapEnabled = YES;
-	} else if ([self anchoredToSide] == ADAnchorSideRight) {//showing the left side
+	} else if ([self anchoredToSide] == ADAnchorSideRight) {//showing the right side
 		CGFloat distance = 0;
-		switch ([self rightAnchorWidthType]) {
+		switch ([self leftViewAnchorWidthType]) {
 			case ADAnchorWidthTypePeek:
-				distance = [[[self mainViewController] view] frame].size.width - [self rightAnchorAmount];
+				distance = [[[self mainViewController] view] frame].size.width - [self leftViewAnchorWidth];
 				break;
 			case ADAnchorWidthTypeReveal:
-				distance = [self rightAnchorAmount];
+				distance = [self leftViewAnchorWidth];
 				break;
 		}
 		newCenter = horizontalCenter + distance;
@@ -313,13 +330,13 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	UIViewAutoresizing leftViewAutoResizing;
 	
 	leftViewFrame = [[self view] bounds];
-	switch ([self leftAnchorWidthType]) {
+	switch ([self leftViewAnchorWidthType]) {
 		case ADAnchorWidthTypePeek:
-			leftViewFrame.size.width = [[self view] bounds].size.width - [self leftAnchorAmount];
+			leftViewFrame.size.width = [[self view] bounds].size.width - [self leftViewAnchorWidth];
 			leftViewAutoResizing = kFullScreenAutoResizing;
 			break;
 		case ADAnchorWidthTypeReveal:
-			leftViewFrame.size.width = [self leftAnchorAmount];
+			leftViewFrame.size.width = [self leftViewAnchorWidth];
 			leftViewAutoResizing = kLeftSideAutoResizing;
 			break;
 	}
@@ -335,15 +352,15 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	UIViewAutoresizing rightViewAutoResizing;
 	
 	rightViewFrame = [[self view] bounds];
-	switch ([self rightAnchorWidthType]) {
+	switch ([self rightViewAnchorWidthType]) {
 		case ADAnchorWidthTypePeek:
-			rightViewFrame.origin.x = [self rightAnchorAmount];
-			rightViewFrame.size.width -= [self rightAnchorAmount];
+			rightViewFrame.origin.x = [self rightViewAnchorWidth];
+			rightViewFrame.size.width -= [self rightViewAnchorWidth];
 			rightViewAutoResizing = kRightSideAutoResizing;
 			break;
 		case ADAnchorWidthTypeReveal:
-			rightViewFrame.origin.x = rightViewFrame.size.width - [self rightAnchorAmount];
-			rightViewFrame.size.width = [self rightAnchorAmount];
+			rightViewFrame.origin.x = rightViewFrame.size.width - [self rightViewAnchorWidth];
+			rightViewFrame.size.width = [self rightViewAnchorWidth];
 			rightViewAutoResizing = kRightSideAutoResizing;
 			break;
 	}
@@ -357,15 +374,43 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 - (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter {
 	CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
+	
+	CGRect mainFrame = [[self view] bounds];
+	
+	mainFrame.origin.x = newCenter - viewCenter;
 	if (newCenter < viewCenter) {
 		[self rightViewWillAppear];
+		
+		if ([self rightViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
+			
+		}
 	} else if (newCenter > viewCenter) {
 		[self leftViewWillAppear];
+		
+		if ([self leftViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
+			mainFrame.size.width -= mainFrame.origin.x;
+		}
 	}
 	
-	CGPoint center = [[[self mainViewController] view] center];
+	/*CGPoint center = [[[self mainViewController] view] center];
 	center.x = newCenter;
-	[[[self mainViewController] view] setCenter:center];
+	[[[self mainViewController] view] setCenter:center];*/
+	[[[self mainViewController] view] setFrame:mainFrame];
+	
+	if ([self leftViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
+		CGRect leftFrame = [[[self leftViewController] view] frame];
+		leftFrame.origin.x = leftFrame.size.width;
+		leftFrame.origin.x *= -1;
+		leftFrame.origin.x -= viewCenter - newCenter;
+		[[[self leftViewController] view] setFrame:leftFrame];
+	}
+	
+	if ([self rightViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
+		CGRect rightFrame = [[[self rightViewController] view] frame];
+		rightFrame.origin.x = [[self view] bounds].size.width;
+		rightFrame.origin.x -= viewCenter - newCenter;
+		[[[self rightViewController] view] setFrame:rightFrame];
+	}
 }
 
 - (void)leftViewWillAppear {

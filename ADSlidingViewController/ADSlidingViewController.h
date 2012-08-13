@@ -11,34 +11,34 @@
 
 /* Anchor Side */
 typedef NS_ENUM(NSInteger, ADAnchorSide) {
-	ADAnchorSideLeft,
-	ADAnchorSideCenter,
-	ADAnchorSideRight
+	ADAnchorSideLeft = 0,
+	ADAnchorSideCenter = 1,
+	ADAnchorSideRight = 2
 };
 
 /* Anchor Width Type */
 typedef NS_ENUM(NSInteger, ADAnchorWidthType) {
-	ADAnchorWidthTypePeek,
-	ADAnchorWidthTypeReveal
+	ADAnchorWidthTypePeek = 0,
+	ADAnchorWidthTypeReveal = 1
 };
 
 /* Anchor Layout Type */
 typedef NS_ENUM(NSInteger, ADAnchorLayoutType) {
-	ADAnchorLayoutTypeSlide,
-	ADAnchorLayoutTypeResize
+	ADAnchorLayoutTypeSlide = 0,
+	ADAnchorLayoutTypeResize = 1
 };
 
 /* Secondary Layout Type */
 typedef NS_ENUM(NSInteger, ADSecondaryLayoutType) {
-	ADSecondaryLayoutTypeUnderneath,
-	ADSecondaryLayoutTypeSlide
+	ADSecondaryLayoutTypeUnderneath = 0,
+	ADSecondaryLayoutTypeSlide = 1
 };
 
 /* Underside Persitency */
 typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
-	ADUndersidePersistencyTypeNone,
-	ADUndersidePersistencyTypeLandscapeOnly,
-	ADUndersidePersistencyTypeAlways
+	ADUndersidePersistencyTypeNone = 0,
+	ADUndersidePersistencyTypeLandscapeOnly = 1,
+	ADUndersidePersistencyTypeAlways = 2
 };
 
 /* Reset Methods */
@@ -70,14 +70,16 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 @property (nonatomic) UIViewController *rightViewController;
 
 /* Layout Properties */
-@property CGFloat leftAnchorAmount;
-@property CGFloat rightAnchorAmount;
-@property ADAnchorWidthType leftAnchorWidthType;
-@property ADAnchorWidthType rightAnchorWidthType;
-@property ADAnchorLayoutType leftAnchorLayoutType;
-@property ADAnchorLayoutType rightAnchorLayoutType;
+@property (nonatomic) CGFloat leftViewAnchorWidth;
+@property (nonatomic) CGFloat rightViewAnchorWidth;
+@property (nonatomic) ADAnchorWidthType leftViewAnchorWidthType;
+@property (nonatomic) ADAnchorWidthType rightViewAnchorWidthType;
+@property (nonatomic) ADAnchorLayoutType leftViewAnchorLayoutType;
+@property (nonatomic) ADAnchorLayoutType rightViewAnchorLayoutType;
+@property (nonatomic) ADSecondaryLayoutType leftViewSecondaryLayoutType;
+@property (nonatomic) ADSecondaryLayoutType rightViewSecondaryLayoutType;
 
-@property ADUndersidePersistencyType undersidePersistencyType;
+@property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
 @property (nonatomic) ADResetStrategy resetStrategy;
 
 @property BOOL shouldAllowInteractionsWhenAnchored;
