@@ -51,8 +51,9 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 /* Delegate */
 @class ADSlidingViewController;
 @protocol ADSlidingViewControllerDelegate <NSObject>
+@optional
+
 //Anchoring
-- (BOOL)ADSlidingViewController:(ADSlidingViewController *)slidingViewController shouldAnchorToSide:(ADAnchorSide)side;
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController didAnchorToSide:(ADAnchorSide)side;
 
 - (void)ADSlidingViewControllerWillShowLeftView:(ADSlidingViewController *)slidingViewController;
@@ -60,7 +61,7 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 @end
 
 
-@interface ADSlidingViewController : UIViewController
+@interface ADSlidingViewController : UIViewController <UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) id<ADSlidingViewControllerDelegate> delegate;
 
@@ -88,6 +89,9 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 
 /* UI Properties */
 @property (nonatomic) BOOL showTopViewShadow;
+
+/* Gestures */
+@property (readonly) UITapGestureRecognizer *resetTapGesture;
 
 /* Methods */
 

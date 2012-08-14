@@ -10,7 +10,7 @@
 
 #import "ADSlidingViewController.h"
 
-#pragma mark  UIViewController Extension
+#pragma mark - UIViewController Extension
 @implementation UIViewController (ADSlidingViewController)
 - (ADSlidingViewController *)slidingViewController {
 	UIViewController *viewController = [self parentViewController];
@@ -29,10 +29,10 @@
 @interface ADSlidingViewController () {
 	CGFloat initialTouchX;
 	CGFloat initialViewCenterX;
+	CGFloat currentMainViewCenterX;
 }
 
 /* Gestures */
-@property (nonatomic) UITapGestureRecognizer *resetTapGesture;
 @property (nonatomic) UIPanGestureRecognizer *panGesture;
 
 /* Layout Properties */
@@ -97,6 +97,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_elasticityAmount = kADDegaultElasticityAmount;
 	_mainViewShouldAllowInteractionsWhenAnchored = kADDefaultMainViewAllowsInteraction;
 	_anchoredToSide = ADAnchorSideCenter;
+	
+	//[[self view] setAutoresizesSubviews:NO];
+	//[[[self mainViewController] view] setAutoresizesSubviews:NO];
+	//[[[[self mainViewController] view] layer] setNeedsDisplayOnBoundsChange:YES];
 }
 
 - (void)viewDidLoad {
@@ -104,9 +108,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	[super viewDidLoad];
 	
+	[[self view] setAutoresizingMask:kFullScreenAutoResizing];
+	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
+	[_resetTapGesture setDelegate:self];
+	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
+	//[[self view] addGestureRecognizer:[self panGesture]];
 	
 	/* Key-Value Observation */
 	[self addObserver:self forKeyPath:@"leftViewAnchorWidth" options:NSKeyValueObservingOptionNew context:nil];
@@ -122,23 +131,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[self addObserver:self forKeyPath:@"rightViewSecondaryLayoutType" options:NSKeyValueObservingOptionNew context:nil];
 	
 	[self addObserver:self forKeyPath:@"undersidePersistencyType" options:NSKeyValueObservingOptionNew context:nil];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-	NSLog();
-	
-	[super viewWillAppear:animated];
-	
-	//Shadow
-	[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
-	[[[[self mainViewController] view] layer] setShadowPath:[UIBezierPath bezierPathWithRect:[[[self view] layer] bounds]].CGPath];
-	[[[[self mainViewController] view] layer] setShadowRadius:10];
-	[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
-	if ([self showTopViewShadow]) {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.75f];
-	} else {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
-	}
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
@@ -256,11 +248,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)setShowTopViewShadow:(BOOL)showTopViewShadow {
 	NSLog(@"%d", showTopViewShadow);
 	_showTopViewShadow = showTopViewShadow;
-	if ([self showTopViewShadow]) {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.75f];
-	} else {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
-	}
+	[self updateMainViewShadow];
 }
 
 #pragma mark - View Information
@@ -304,7 +292,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if ([sender state] == UIGestureRecognizerStateBegan) {
 		NSLog(@"Began");
 		initialTouchX = currentTouchX;
-		initialViewCenterX = [[[self mainViewController] view] center].x;
+		initialViewCenterX = currentMainViewCenterX;
 	} else if ([sender state] == UIGestureRecognizerStateChanged) {
 		//Calculate movement
 		CGFloat panAmount = initialTouchX - currentTouchX;
@@ -323,10 +311,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			extra -= (viewWidth = [[[self rightViewController] view] frame].size.width);
 		}
 		if (extra > 0) {
-			newCenter += extra * (1 - [self elasticityAmount]) * multiple;
+			//newCenter += extra * (1 - [self elasticityAmount]) * multiple;
 			//newCenter += log(extra) * multiple;
 			//newCenter += extra
 			//newCenter = initialViewCenterX + (viewWidth + 2/extra) * multiple;
+			CAMediaTimingFunction *timing = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
 		}
 		
 		//Check the view we are panning to exists
@@ -362,6 +351,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	}
 }
 
+/*- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+	NSLog(@"%@, %@", gestureRecognizer, otherGestureRecognizer);
+	return NO;
+}*/
+
 #pragma mark - Laying out
 - (void)updateLayout {
 	NSLog();
@@ -377,53 +371,15 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	CGFloat newCenter = [self calculateMainViewCenterWhenAnchoredToSide:[self anchoredToSide]];
 	
 	BOOL resetTapEnabled;
-	if ([self anchoredToSide] == ADAnchorSideCenter) {
-		resetTapEnabled = NO;
-	} else {
+	if ([self anchoredToSide] != ADAnchorSideCenter) {
 		resetTapEnabled = YES;
+	} else {
+		resetTapEnabled = NO;
 	}
 	
 	//Do the stuff
 	[self moveMainViewToHorizontalCenter:newCenter];
 	[[self resetTapGesture] setEnabled:resetTapEnabled];
-	
-	//Shadow
-	[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
-	[[[[self mainViewController] view] layer] setShadowPath:[UIBezierPath bezierPathWithRect:[[[self view] layer] bounds]].CGPath];
-}
-
-- (CGFloat)calculateMainViewCenterWhenAnchoredToSide:(ADAnchorSide)side {
-	//Calculations
-	CGFloat horizontalCenter = CGRectGetMidX([[self view] bounds]);
-	CGFloat newCenter = [[[self mainViewController] view] center].x;
-	
-	if (side == ADAnchorSideCenter) {
-		newCenter = horizontalCenter;
-	} else if ([self anchoredToSide] == ADAnchorSideLeft) {//showing the left side
-		CGFloat distance = 0;
-		switch ([self rightViewAnchorWidthType]) {
-			case ADAnchorWidthTypePeek:
-				distance = [[[self mainViewController] view] frame].size.width - [self rightViewAnchorWidth];
-				break;
-			case ADAnchorWidthTypeReveal:
-				distance = [self rightViewAnchorWidth];
-				break;
-		}
-		newCenter = horizontalCenter - distance;
-	} else if (side == ADAnchorSideRight) {//showing the right side
-		CGFloat distance = 0;
-		switch ([self leftViewAnchorWidthType]) {
-			case ADAnchorWidthTypePeek:
-				distance = [[[self mainViewController] view] frame].size.width - [self leftViewAnchorWidth];
-				break;
-			case ADAnchorWidthTypeReveal:
-				distance = [self leftViewAnchorWidth];
-				break;
-		}
-		newCenter = horizontalCenter + distance;
-	}
-	
-	return newCenter;
 }
 
 - (void)updateLeftViewLayout {
@@ -476,21 +432,75 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[[[self rightViewController] view] setAutoresizingMask:rightViewAutoResizing];
 }
 
+- (CGFloat)calculateMainViewCenterWhenAnchoredToSide:(ADAnchorSide)side {
+	//Calculations
+	CGFloat horizontalCenter = CGRectGetMidX([[self view] bounds]);
+	CGFloat newCenter = [[[self mainViewController] view] center].x;
+	
+	if (side == ADAnchorSideCenter) {
+		newCenter = horizontalCenter;
+	} else if ([self anchoredToSide] == ADAnchorSideLeft) {//showing the left side
+		CGFloat distance = 0;
+		switch ([self rightViewAnchorWidthType]) {
+			case ADAnchorWidthTypePeek:
+				distance = [[[self mainViewController] view] frame].size.width - [self rightViewAnchorWidth];
+				break;
+			case ADAnchorWidthTypeReveal:
+				distance = [self rightViewAnchorWidth];
+				break;
+		}
+		newCenter = horizontalCenter - distance;
+	} else if (side == ADAnchorSideRight) {//showing the right side
+		CGFloat distance = 0;
+		switch ([self leftViewAnchorWidthType]) {
+			case ADAnchorWidthTypePeek:
+				distance = [[[self mainViewController] view] frame].size.width - [self leftViewAnchorWidth];
+				break;
+			case ADAnchorWidthTypeReveal:
+				distance = [self leftViewAnchorWidth];
+				break;
+		}
+		newCenter = horizontalCenter + distance;
+	}
+	
+	return newCenter;
+}
+
+- (void)updateMainViewShadow {
+	//Shadow
+	[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
+	[[[[self mainViewController] view] layer] setShadowRadius:10];
+	[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
+	if ([self showTopViewShadow]) {
+		[[[[self mainViewController] view] layer] setShadowOpacity:0.75f];
+	} else {
+		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
+	}
+	
+	[self updateMainViewShadowPath];
+}
+
+- (void)updateMainViewShadowPath {
+	[[[[self mainViewController] view] layer] setShadowPath:[UIBezierPath bezierPathWithRect:[[[self mainViewController] view] bounds]].CGPath];
+}
+
 #pragma mark - Movement
 
 - (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter {
 	NSLog(@"%f", newCenter);
 	
-	CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
+	currentMainViewCenterX = newCenter;
 	
 	CGRect mainFrame = [[self view] bounds];
+	CGFloat viewCenter = CGRectGetMidX(mainFrame);
 	
 	mainFrame.origin.x = newCenter - viewCenter;
 	if (newCenter < viewCenter) {
 		[self rightViewWillAppear];
 		
 		if ([self rightViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
-			
+			mainFrame.size.width += mainFrame.origin.x;
+			mainFrame.origin.x = 0;
 		}
 	} else if (newCenter > viewCenter) {
 		[self leftViewWillAppear];
@@ -500,6 +510,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		}
 	}
 	
+	//CGPoint center = CGPointMake(CGRectGetMidX(mainFrame), CGRectGetMidY(mainFrame));
+	//[[[self mainViewController] view] setBounds:mainFrame];
+	//[[[self mainViewController] view] setCenter:center];
+	
 	[[[self mainViewController] view] setFrame:mainFrame];
 	
 	if ([self leftViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
@@ -507,15 +521,20 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		leftFrame.origin.x = leftFrame.size.width;
 		leftFrame.origin.x *= -1;
 		leftFrame.origin.x -= viewCenter - newCenter;
-		[[[self leftViewController] view] setFrame:leftFrame];
+		CGPoint leftCenter = CGPointMake(CGRectGetMidX(leftFrame), CGRectGetMidY(leftFrame));
+		[[[self leftViewController] view] setCenter:leftCenter];
 	}
 	
 	if ([self rightViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
 		CGRect rightFrame = [[[self rightViewController] view] frame];
 		rightFrame.origin.x = [[self view] bounds].size.width;
 		rightFrame.origin.x -= viewCenter - newCenter;
+		//CGPoint rightCenter = CGPointMake(CGRectGetMidX(rightFrame), CGRectGetMidY(rightFrame));
+		//[[[self rightViewController] view] setCenter:rightCenter];
 		[[[self rightViewController] view] setFrame:rightFrame];
 	}
+	
+	[self updateMainViewShadowPath];
 }
 
 - (void)leftViewWillAppear {
@@ -555,10 +574,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated duration:(NSTimeInterval)duration completion:(void (^)())completion {
 	NSLog();
 	
-	if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewController:shouldAnchorToSide:)] && ![[self delegate] ADSlidingViewController:self shouldAnchorToSide:side]) {
-		return;
-	}
-	
 	//Pre-Animation
 	if (side == ADAnchorSideLeft) {
 		[self rightViewWillAppear];
@@ -587,7 +602,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Do the animation
 	if (animated) {
-		[UIView animateWithDuration:duration delay:0 options:UIViewAnimationCurveEaseOut animations:animations completion:acompletion];
+		[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut | UIViewAnimationOptionBeginFromCurrentState animations:animations completion:acompletion];
 	} else {
 		animations();
 		acompletion(YES);
