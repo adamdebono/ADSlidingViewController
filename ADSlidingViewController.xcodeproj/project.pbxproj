@@ -49,6 +49,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A282675515DBB7FC003E9A43 /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.md; sourceTree = "<group>"; };
 		A2C5264C15CA8166007DB2B9 /* libADSlidingViewController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libADSlidingViewController.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C5264F15CA8166007DB2B9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A2C5265315CA8166007DB2B9 /* ADSlidingViewController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ADSlidingViewController-Prefix.pch"; sourceTree = "<group>"; };
@@ -99,6 +100,7 @@
 		A2C5264115CA8166007DB2B9 = {
 			isa = PBXGroup;
 			children = (
+				A282675515DBB7FC003E9A43 /* Readme.md */,
 				A2C5265115CA8166007DB2B9 /* ADSlidingViewController */,
 				A2C5266915CA81DF007DB2B9 /* ADSlidingViewControllerDemo */,
 				A2C5264E15CA8166007DB2B9 /* Frameworks */,
@@ -434,6 +436,7 @@
 				A2C5265C15CA8166007DB2B9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A2C5267E15CA81DF007DB2B9 /* Build configuration list for PBXNativeTarget "ADSlidingViewControllerDemo" */ = {
 			isa = XCConfigurationList;
@@ -442,6 +445,7 @@
 				A2C5268015CA81DF007DB2B9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
