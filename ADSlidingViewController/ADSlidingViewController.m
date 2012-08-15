@@ -311,11 +311,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			extra -= (viewWidth = [[[self rightViewController] view] frame].size.width);
 		}
 		if (extra > 0) {
-			//newCenter += extra * (1 - [self elasticityAmount]) * multiple;
+			newCenter += extra * (1 - [self elasticityAmount]) * multiple;
 			//newCenter += log(extra) * multiple;
 			//newCenter += extra
 			//newCenter = initialViewCenterX + (viewWidth + 2/extra) * multiple;
-			CAMediaTimingFunction *timing = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+			//CAMediaTimingFunction *timing = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
 		}
 		
 		//Check the view we are panning to exists
