@@ -42,7 +42,6 @@
 
 /* Default Values */
 static const CGFloat kADDefaultAnchorAmount = 300.0f;
-static const CGFloat kADDegaultElasticityAmount = 0.25;
 
 static const BOOL kADDefaultMainViewAllowsInteraction = NO;
 
@@ -94,13 +93,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_resetStrategy = ADResetStrategyTapping | ADResetStrategyPanning;
 	
 	
-	_elasticityAmount = kADDegaultElasticityAmount;
 	_mainViewShouldAllowInteractionsWhenAnchored = kADDefaultMainViewAllowsInteraction;
 	_anchoredToSide = ADAnchorSideCenter;
-	
-	//[[self view] setAutoresizesSubviews:NO];
-	//[[[self mainViewController] view] setAutoresizesSubviews:NO];
-	//[[[[self mainViewController] view] layer] setNeedsDisplayOnBoundsChange:YES];
 }
 
 - (void)viewDidLoad {
@@ -303,19 +297,22 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		CGFloat viewWidth;
 		CGFloat extra;
 		int multiple = 1;
-		extra = abs(newCenter - viewCenter);
 		if (newCenter > viewCenter) {
-			extra -= (viewWidth = [[[self leftViewController] view] frame].size.width);
-			multiple = -1;
+			viewWidth = [[[self leftViewController] view] frame].size.width;
 		} else {
-			extra -= (viewWidth = [[[self rightViewController] view] frame].size.width);
+			viewWidth = [[[self rightViewController] view] frame].size.width;
+			multiple = -1;
 		}
-		if (extra > 0) {
-			newCenter += extra * (1 - [self elasticityAmount]) * multiple;
-			//newCenter += log(extra) * multiple;
-			//newCenter += extra
-			//newCenter = initialViewCenterX + (viewWidth + 2/extra) * multiple;
-			//CAMediaTimingFunction *timing = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+		CGFloat delta = abs(viewCenter - newCenter);
+		if (delta > viewWidth) {
+			CGFloat elasticity = 100;
+			CGFloat proportion = (delta - viewWidth) / elasticity;
+			
+			CGFloat equation;
+			equation = tanh(proportion/2) * elasticity;
+			
+			extra = viewWidth + equation;
+			newCenter = viewCenter + extra * multiple;
 		}
 		
 		//Check the view we are panning to exists

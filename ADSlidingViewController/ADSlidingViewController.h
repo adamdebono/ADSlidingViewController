@@ -83,8 +83,6 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 @property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
 @property (nonatomic) ADResetStrategy resetStrategy;
 
-@property CGFloat elasticityAmount;
-
 @property BOOL mainViewShouldAllowInteractionsWhenAnchored;
 
 /* UI Properties */
