@@ -71,25 +71,28 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 @property (nonatomic) UIViewController *rightViewController;
 
 /* Layout Properties */
-@property (nonatomic) CGFloat leftViewAnchorWidth;
-@property (nonatomic) CGFloat rightViewAnchorWidth;
-@property (nonatomic) ADAnchorWidthType leftViewAnchorWidthType;
-@property (nonatomic) ADAnchorWidthType rightViewAnchorWidthType;
-@property (nonatomic) ADAnchorLayoutType leftViewAnchorLayoutType;
-@property (nonatomic) ADAnchorLayoutType rightViewAnchorLayoutType;
-@property (nonatomic) ADSecondaryLayoutType leftViewSecondaryLayoutType;
-@property (nonatomic) ADSecondaryLayoutType rightViewSecondaryLayoutType;
+@property CGFloat leftViewAnchorWidth;
+@property CGFloat rightViewAnchorWidth;
+@property ADAnchorWidthType leftViewAnchorWidthType;
+@property ADAnchorWidthType rightViewAnchorWidthType;
+@property ADAnchorLayoutType leftViewAnchorLayoutType;
+@property ADAnchorLayoutType rightViewAnchorLayoutType;
+@property ADSecondaryLayoutType leftViewSecondaryLayoutType;
+@property ADSecondaryLayoutType rightViewSecondaryLayoutType;
 
-@property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
+@property ADUndersidePersistencyType undersidePersistencyType;
 @property (nonatomic) ADResetStrategy resetStrategy;
 
 @property BOOL mainViewShouldAllowInteractionsWhenAnchored;
+
+@property (readonly) ADAnchorSide anchoredToSide;
 
 /* UI Properties */
 @property (nonatomic) BOOL showTopViewShadow;
 
 /* Gestures */
 @property (readonly) UITapGestureRecognizer *resetTapGesture;
+@property (readonly) UIPanGestureRecognizer *panGesture;
 
 /* Methods */
 
@@ -98,7 +101,6 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 - (BOOL)rightViewShowing;
 
 #pragma mark - Getters
-- (UIPanGestureRecognizer *)panGesture;
 - (ADAnchorSide)anchoredToSide;
 
 #pragma mark - Anchoring Functions
