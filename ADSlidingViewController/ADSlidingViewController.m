@@ -83,9 +83,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_leftViewSecondaryLayoutType = kADDefaultSecondaryLayoutType;
 	_rightViewSecondaryLayoutType = kADDefaultSecondaryLayoutType;
 	
-	_undersidePersistencyType = kADDefaultUndersidePersistencyType;
-	_resetStrategy = ADResetStrategyTapping | ADResetStrategyPanning;
-	
+	_undersidePersistencyType = kADDefaultUndersidePersistencyType;	
 	
 	_mainViewShouldAllowInteractionsWhenAnchored = kADDefaultMainViewAllowsInteraction;
 	_anchoredToSide = ADAnchorSideCenter;
@@ -100,6 +98,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
+	[_resetTapGesture setCancelsTouchesInView:YES];
+	[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
@@ -125,6 +125,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	NSLog();
 	
 	[super viewWillAppear:animated];
+	
+	[self updateLayout];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+	NSLog();
+	
+	[super viewDidAppear:animated];
 	
 	[self updateLayout];
 }
@@ -220,17 +228,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[self updateLayout];
 }
 
-- (void)setResetStrategy:(ADResetStrategy)resetStrategy {
-	NSLog();
-	_resetStrategy = resetStrategy;
-	
-	if ([self resetStrategy] & ADResetStrategyTapping) {
-		[[self resetTapGesture] setEnabled:YES];
-	} else {
-		[[self resetTapGesture] setEnabled:NO];
-	}
-}
-
 - (void)setShowTopViewShadow:(BOOL)showTopViewShadow {
 	NSLog(@"%d", showTopViewShadow);
 	_showTopViewShadow = showTopViewShadow;
@@ -271,6 +268,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		initialViewCenterX = currentMainViewCenterX;
 	} else if ([sender state] == UIGestureRecognizerStateChanged) {
 		//Calculate movement
+		
 		CGFloat panAmount = initialTouchX - currentTouchX;
 		CGFloat newCenter = initialViewCenterX - panAmount;
 		
@@ -307,9 +305,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		CGFloat velocity = [sender velocityInView:[self view]].x;
 		
 		ADAnchorSide side;
+		NSTimeInterval duration;
 		
-		if (velocity < 100 && velocity > 100) {
+		if (velocity > -100 && velocity < 100) {
 			side = [self anchoredToSide];
+			
+			duration = kADViewAnimationTime;
 		} else {
 			if ([self leftViewShowing] && velocity > 0) {
 				side = ADAnchorSideRight;
@@ -318,17 +319,22 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			} else {
 				side = ADAnchorSideCenter;
 			}
+			
+			if ([self anchoredToSide] == side) {
+				duration = kADViewAnimationTime;
+			} else {
+				CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:side];
+				double distance = fabs(newCenter - currentMainViewCenterX);
+				duration = distance / fabs(velocity);
+				if (duration > 0.4) {
+					duration = 0.4;
+				}
+			}
 		}
-		
-		CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:side];
-		CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
-		CGFloat distance = fabsf(newCenter - viewCenter);
-		NSTimeInterval duration = (double)distance / fabs(velocity);
 		
 		NSLog(@"Finished: velocity = %f, duration %f", velocity, duration);
 		
-		//[self anchorTopViewTo:side animated:YES duration:duration completion:NULL];
-		[self anchorTopViewTo:side];
+		[self anchorTopViewTo:side animated:YES duration:duration completion:NULL];
 	}
 }
 
@@ -583,6 +589,13 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		if (completion) {
 			completion();
 		}
+		
+		if (side != ADAnchorSideCenter) {
+			[_resetTapGesture setEnabled:YES];
+		} else {
+			[_resetTapGesture setEnabled:NO];
+		}
+		
 		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewController:didAnchorToSide:)]) {
 			[[self delegate] ADSlidingViewController:self didAnchorToSide:side];
 		}

@@ -41,13 +41,6 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 	ADUndersidePersistencyTypeAlways = 2
 };
 
-/* Reset Strategies */
-typedef NS_ENUM(NSInteger, ADResetStrategy) {
-	ADResetStrategyNone = 0,
-	ADResetStrategyTapping = 1 << 0,
-	ADResetStrategyPanning = 1 << 1
-};
-
 /* Delegate */
 @class ADSlidingViewController;
 @protocol ADSlidingViewControllerDelegate <NSObject>
@@ -81,7 +74,6 @@ typedef NS_ENUM(NSInteger, ADResetStrategy) {
 @property ADSecondaryLayoutType rightViewSecondaryLayoutType;
 
 @property ADUndersidePersistencyType undersidePersistencyType;
-@property (nonatomic) ADResetStrategy resetStrategy;
 
 @property BOOL mainViewShouldAllowInteractionsWhenAnchored;
 

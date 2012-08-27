@@ -22,9 +22,10 @@ Please place any feature requests or bugs in the issues section of this repo.
 ## TODO ##
 
 - Underside persistency
-- Slide speed after panning
-- Reset strategy
+- Slide speed after panning - when elastic has taken place
+- Switch pan calculation to use translationInView:
 
 ## BUGS ##
 
 - Anchor animation when on resize
+- Tap gesture gets buttons on iOS 6

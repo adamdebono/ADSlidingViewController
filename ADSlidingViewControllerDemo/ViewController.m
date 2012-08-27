@@ -27,6 +27,7 @@
 	[self setRightViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"rightViewController"]];
 	
 	[self setShowTopViewShadow:YES];
+	[self setMainViewShouldAllowInteractionsWhenAnchored:NO];
 }
 
 - (void)didReceiveMemoryWarning
