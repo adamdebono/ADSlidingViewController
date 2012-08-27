@@ -19,10 +19,11 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 	
-	UIViewController *vc = [[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"mainViewController"];
-	[[vc view] addGestureRecognizer:[self panGesture]];
+	UIViewController *mainvc = [[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"mainViewController"];
+	[[mainvc view] addGestureRecognizer:[self panGesture]];
+	[[mainvc view] addGestureRecognizer:[self resetTapGesture]];
 	
-	[self setMainViewController:vc];
+	[self setMainViewController:mainvc];
 	[self setLeftViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"leftViewController"]];
 	[self setRightViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"rightViewController"]];
 	

@@ -23,7 +23,6 @@ Please place any feature requests or bugs in the issues section of this repo.
 
 - Underside persistency
 - Slide speed after panning - when elastic has taken place
-- Switch pan calculation to use translationInView:
 
 ## BUGS ##
 

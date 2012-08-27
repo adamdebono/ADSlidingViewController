@@ -27,7 +27,6 @@
 
 #pragma mark - Private Interface
 @interface ADSlidingViewController () {
-	CGFloat initialTouchX;
 	CGFloat initialViewCenterX;
 	CGFloat currentMainViewCenterX;
 }
@@ -169,7 +168,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		[self addChildViewController:[self mainViewController]];
 		[[self mainViewController] didMoveToParentViewController:self];
 		
-		[[[self mainViewController] view] addGestureRecognizer:[self resetTapGesture]];
 		[[[self mainViewController] view] setAutoresizingMask:kFullScreenAutoResizing];
 		
 		[self updateMainViewLayout];
@@ -260,17 +258,13 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)panGestureActivated:(UIPanGestureRecognizer *)sender {
-	CGFloat currentTouchX = [sender locationInView:[self view]].x;
-	
 	if ([sender state] == UIGestureRecognizerStateBegan) {
 		NSLog(@"Began Pan Gesture");
-		initialTouchX = currentTouchX;
 		initialViewCenterX = currentMainViewCenterX;
 	} else if ([sender state] == UIGestureRecognizerStateChanged) {
 		//Calculate movement
-		
-		CGFloat panAmount = initialTouchX - currentTouchX;
-		CGFloat newCenter = initialViewCenterX - panAmount;
+		CGFloat panAmount = [sender translationInView:[sender view]].x;
+		CGFloat newCenter = initialViewCenterX + panAmount;
 		
 		//Calculate Elastic
 		CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
@@ -332,7 +326,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			}
 		}
 		
-		NSLog(@"Finished: velocity = %f, duration %f", velocity, duration);
+		NSLog(@"Finished Pan Gesture: velocity = %f, duration %f", velocity, duration);
 		
 		[self anchorTopViewTo:side animated:YES duration:duration completion:NULL];
 	}
