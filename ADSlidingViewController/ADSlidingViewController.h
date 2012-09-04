@@ -10,36 +10,36 @@
 #import <UIKit/UIKit.h>
 
 /* Anchor Side */
-typedef NS_ENUM(NSInteger, ADAnchorSide) {
+typedef enum {
 	ADAnchorSideLeft = 0,
 	ADAnchorSideCenter = 1,
 	ADAnchorSideRight = 2
-};
+} ADAnchorSide;
 
 /* Anchor Width Type */
-typedef NS_ENUM(NSInteger, ADAnchorWidthType) {
+typedef enum {
 	ADAnchorWidthTypePeek = 0,
 	ADAnchorWidthTypeReveal = 1
-};
+} ADAnchorWidthType;
 
 /* Anchor Layout Type */
-typedef NS_ENUM(NSInteger, ADAnchorLayoutType) {
+typedef enum {
 	ADAnchorLayoutTypeSlide = 0,
 	ADAnchorLayoutTypeResize = 1
-};
+} ADAnchorLayoutType;
 
 /* Secondary Layout Type */
-typedef NS_ENUM(NSInteger, ADSecondaryLayoutType) {
+typedef enum {
 	ADSecondaryLayoutTypeUnderneath = 0,
 	ADSecondaryLayoutTypeSlide = 1
-};
+} ADSecondaryLayoutType;
 
 /* Underside Persitency */
-typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
+typedef enum {
 	ADUndersidePersistencyTypeNone = 0,
 	ADUndersidePersistencyTypeLandscapeOnly = 1,
 	ADUndersidePersistencyTypeAlways = 2
-};
+} ADUndersidePersistencyType;
 
 /* Delegate */
 @class ADSlidingViewController;

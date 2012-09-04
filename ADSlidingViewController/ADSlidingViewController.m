@@ -10,6 +10,8 @@
 
 #import "ADSlidingViewController.h"
 
+#define UseExtraCalculations
+
 #pragma mark - UIViewController Extension
 @implementation UIViewController (ADSlidingViewController)
 - (ADSlidingViewController *)slidingViewController {
@@ -102,7 +104,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[_resetTapGesture setDelegate:self];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
+	[_panGesture setCancelsTouchesInView:YES];
+	[_panGesture setDelaysTouchesBegan:YES];
 	[_panGesture setDelegate:self];
+	
 	
 	/* Key-Value Observation */
 	[self addObserver:self forKeyPath:@"leftViewAnchorWidth" options:NSKeyValueObservingOptionNew context:nil];
@@ -147,9 +152,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	return YES;
 }
 
+#ifdef __IPHONE_6_0
 - (NSUInteger)supportedInterfaceOrientations {
 	return UIInterfaceOrientationMaskAll;
 }
+#endif
 
 #pragma mark - View Controller Setters
 
@@ -265,9 +272,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		//Calculate movement
 		CGFloat panAmount = [sender translationInView:[sender view]].x;
 		CGFloat newCenter = initialViewCenterX + panAmount;
-		
-		//Calculate Elastic
 		CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
+
+#ifdef UseExtraCalculations
+		//Calculate Elastic
 		CGFloat viewWidth;
 		CGFloat extra;
 		int multiple = 1;
@@ -288,6 +296,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			extra = viewWidth + equation;
 			newCenter = viewCenter + extra * multiple;
 		}
+#endif
 		
 		//Check the view we are panning to exists
 		if ((newCenter > viewCenter && ![self leftViewController]) || (newCenter < viewCenter && ![self rightViewController])) {
@@ -299,8 +308,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		CGFloat velocity = [sender velocityInView:[self view]].x;
 		
 		ADAnchorSide side;
-		NSTimeInterval duration;
 		
+		NSTimeInterval duration;
 		if (velocity > -100 && velocity < 100) {
 			side = [self anchoredToSide];
 			
@@ -313,7 +322,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			} else {
 				side = ADAnchorSideCenter;
 			}
-			
+#ifdef UseExtraCalculations			
 			if ([self anchoredToSide] == side) {
 				duration = kADViewAnimationTime;
 			} else {
@@ -324,10 +333,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 					duration = 0.4;
 				}
 			}
+#else
+			duration = kADViewAnimationTime;
+#endif
 		}
 		
 		NSLog(@"Finished Pan Gesture: velocity = %f, duration %f", velocity, duration);
-		
 		[self anchorTopViewTo:side animated:YES duration:duration completion:NULL];
 	}
 }
@@ -450,6 +461,29 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	return newCenter;
 }
 
+- (CGRect)calculateMainViewFrameForHorizontalCenter:(CGFloat)horizontalCenter {
+	CGRect mainViewFrame = [[self view] bounds];
+	CGFloat viewCenter = CGRectGetMidX(mainViewFrame);
+	
+	mainViewFrame.origin.x = horizontalCenter - viewCenter;
+	if (horizontalCenter < viewCenter) {
+		[self rightViewWillAppear];
+		
+		if ([self rightViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
+			mainViewFrame.size.width += mainViewFrame.origin.x;
+			mainViewFrame.origin.x = 0;
+		}
+	} else if (horizontalCenter > viewCenter) {
+		[self leftViewWillAppear];
+		
+		if ([self leftViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
+			mainViewFrame.size.width -= mainViewFrame.origin.x;
+		}
+	}
+	
+	return mainViewFrame;
+}
+
 - (void)updateMainViewShadow {
 	//Shadow
 	[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
@@ -475,7 +509,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	currentMainViewCenterX = newCenter;
 	
-	CGRect mainViewFrame = [[self view] bounds];
+	/*CGRect mainViewFrame = [[self view] bounds];
 	CGFloat viewCenter = CGRectGetMidX(mainViewFrame);
 	
 	mainViewFrame.origin.x = newCenter - viewCenter;
@@ -492,12 +526,21 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		if ([self leftViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
 			mainViewFrame.size.width -= mainViewFrame.origin.x;
 		}
-	}
+	}*/
+	CGRect mainViewFrame = [self calculateMainViewFrameForHorizontalCenter:newCenter];
+	CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
 	
-	CGRect mainViewBounds = CGRectZero;
-	mainViewBounds.size = mainViewFrame.size;
+	//CGRect mainViewBounds = CGRectZero;
+	//mainViewBounds.size = mainViewFrame.size;
+	//CGPoint theCenter = CGPointMake(CGRectGetMidX(mainViewFrame), CGRectGetMidY(mainViewFrame));
 	
 	[[[self mainViewController] view] setFrame:mainViewFrame];
+	//[[[self mainViewController] view] setBounds:mainViewBounds];
+	//[[[self mainViewController] view] setCenter:theCenter];
+	//[[[[self mainViewController] view] layer] setShadowPath:CGPathCreateWithRect(mainViewFrame, NULL)];
+	
+	//[[[[self mainViewController] view] layer] setFrame:mainViewFrame];
+	//[[[[self mainViewController] view] layer] setBounds:mainViewBounds];
 	//[[[self mainViewController] view] setBounds:mainViewBounds];
 	
 	if ([self leftViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
@@ -597,11 +640,55 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Do the animation
 	if (animated) {
-		[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
+		/*CGRect fromRect = [[[self mainViewController] view] frame];
+		CGFloat toCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:side];
+		CGRect toRect = [self calculateMainViewFrameForHorizontalCenter:toCenter];
+		
+		CGRect toBounds = CGRectZero;
+		toBounds.size = toRect.size;
+		CGPoint actualCenter = CGPointMake(CGRectGetMidX(toRect), CGRectGetMidY(toRect));
+		
+		CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
+		[boundsAnimation setFromValue:[NSValue valueWithCGRect:fromRect]];
+		[boundsAnimation setToValue:[NSValue valueWithCGRect:toRect]];
+		[boundsAnimation setDuration:duration];
+		*/
+		
+		//[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
+		[UIView transitionWithView:[self view] duration:duration options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
+		
+		/*[UIView beginAnimations:@"" context:nil];
+		[UIView setAnimationDuration:duration];
+		[UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+		animations();
+		[UIView commitAnimations];
+		acompletion(YES);*/
+		
+		/*
+		[[[[self mainViewController] view] layer] addAnimation:boundsAnimation forKey:@"bounds"];
+		
+		CABasicAnimation *centerAnimation = [CABasicAnimation animationWithKeyPath:@"center"];
+		[centerAnimation setFromValue:[NSValue valueWithCGPoint:[[[self mainViewController] view] center]]];
+		[centerAnimation setToValue:[NSValue valueWithCGPoint:actualCenter]];
+		[centerAnimation setDuration:duration];
+		[[[[self mainViewController] view] layer] addAnimation:centerAnimation forKey:@"center"];
+		
+		[[[self mainViewController] view] setBounds:toBounds];*/
+		//[[[self mainViewController] view] setCenter:actualCenter];
+		
+		//acompletion(YES);
 	} else {
 		animations();
 		acompletion(YES);
 	}
+	
+	/*NSLog(@"duration > 0");
+	CABasicAnimation *animation  = [CABasicAnimation animationWithKeyPath:@"bounds"];
+	[animation setFromValue:[NSValue valueWithCGRect:[[[self mainViewController] view] frame]]];
+	[animation setToValue:[NSValue valueWithCGRect:mainViewFrame]];
+	[animation setDuration:duration];
+	
+	[[[[self mainViewController] view] layer] addAnimation:animation forKey:@"bounds"];*/
 }
 
 @end
