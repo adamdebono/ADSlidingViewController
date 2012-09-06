@@ -195,7 +195,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_leftViewController = leftViewController;
 	
 	if ([self leftViewController]) {
-		[self addChildViewController:[self mainViewController]];
+		[self addChildViewController:[self leftViewController]];
 		[[self leftViewController] didMoveToParentViewController:self];
 		
 		[self updateLeftViewLayout];
