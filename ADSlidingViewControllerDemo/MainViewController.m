@@ -35,11 +35,11 @@
 	[slidingViewController setLeftViewAnchorWidthType:[[self leftAnchorWidthType] selectedSegmentIndex]];
 	[slidingViewController setRightViewAnchorWidthType:[[self rightAnchorWidthType] selectedSegmentIndex]];
 	
-	[slidingViewController setLeftViewAnchorLayoutType:[[self leftAnchorLayoutType] selectedSegmentIndex]];
-	[slidingViewController setRightViewAnchorLayoutType:[[self rightAnchorLayoutType] selectedSegmentIndex]];
+	[slidingViewController setLeftMainAnchorType:[[self leftAnchorLayoutType] selectedSegmentIndex]];
+	[slidingViewController setRightMainAnchorType:[[self rightAnchorLayoutType] selectedSegmentIndex]];
 	
-	[slidingViewController setLeftViewSecondaryLayoutType:[[self leftSecondaryLayoutType] selectedSegmentIndex]];
-	[slidingViewController setRightViewSecondaryLayoutType:[[self rightSecondaryLayoutType] selectedSegmentIndex]];
+	[slidingViewController setLeftUnderAnchorType:[[self leftSecondaryLayoutType] selectedSegmentIndex]];
+	[slidingViewController setRightUnderAnchorType:[[self rightSecondaryLayoutType] selectedSegmentIndex]];
 	
 	[slidingViewController setUndersidePersistencyType:[[self undersidePersistencyControl] selectedSegmentIndex]];
 }

@@ -41,9 +41,9 @@ static const CGFloat kADDefaultAnchorAmount = 300.0f;
 static const BOOL kADDefaultMainViewAllowsInteraction = NO;
 
 static const ADAnchorWidthType kADDefaultAnchorWidthType = ADAnchorWidthTypePeek;
-static const ADAnchorLayoutType kADDefaultAnchorLayoutType = ADAnchorLayoutTypeSlide;
+static const ADMainAnchorType kADDefaultMainAnchorType = ADMainAnchorTypeSlide;
 static const ADUndersidePersistencyType kADDefaultUndersidePersistencyType = ADUndersidePersistencyTypeNone;
-static const ADSecondaryLayoutType kADDefaultSecondaryLayoutType = ADSecondaryLayoutTypeUnderneath;
+static const ADUnderAnchorType kADDefaultUnderAnchorType = ADUnderAnchorTypeUnderneath;
 
 /* Constants */
 static const CGFloat kADViewAnimationTime = 0.3f;
@@ -78,11 +78,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_leftViewAnchorWidthType = kADDefaultAnchorWidthType;
 	_rightViewAnchorWidthType = kADDefaultAnchorWidthType;
 	
-	_leftViewAnchorLayoutType = kADDefaultAnchorLayoutType;
-	_rightViewAnchorLayoutType = kADDefaultAnchorLayoutType;
+	_leftMainAnchorType = kADDefaultMainAnchorType;
+	_rightMainAnchorType = kADDefaultMainAnchorType;
 	
-	_leftViewSecondaryLayoutType = kADDefaultSecondaryLayoutType;
-	_rightViewSecondaryLayoutType = kADDefaultSecondaryLayoutType;
+	_leftUnderAnchorType = kADDefaultUnderAnchorType;
+	_rightUnderAnchorType = kADDefaultUnderAnchorType;
 	
 	_undersidePersistencyType = kADDefaultUndersidePersistencyType;	
 	
@@ -116,11 +116,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[self addObserver:self forKeyPath:@"leftViewAnchorWidthType" options:NSKeyValueObservingOptionNew context:nil];
 	[self addObserver:self forKeyPath:@"rightViewAnchorWidthType" options:NSKeyValueObservingOptionNew context:nil];
 	
-	[self addObserver:self forKeyPath:@"leftViewAnchorLayoutType" options:NSKeyValueObservingOptionNew context:nil];
-	[self addObserver:self forKeyPath:@"rightViewAnchorLayoutType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"leftMainAnchorType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"rightMainAnchorType" options:NSKeyValueObservingOptionNew context:nil];
 	
-	[self addObserver:self forKeyPath:@"leftViewSecondaryLayoutType" options:NSKeyValueObservingOptionNew context:nil];
-	[self addObserver:self forKeyPath:@"rightViewSecondaryLayoutType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"leftUnderAnchorType" options:NSKeyValueObservingOptionNew context:nil];
+	[self addObserver:self forKeyPath:@"rightUnderAnchorType" options:NSKeyValueObservingOptionNew context:nil];
 	
 	[self addObserver:self forKeyPath:@"undersidePersistencyType" options:NSKeyValueObservingOptionNew context:nil];
 }
@@ -142,14 +142,26 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)dealloc {
+	[self removeObserver:self forKeyPath:@"leftViewAnchorWidth"];
+	[self removeObserver:self forKeyPath:@"rightViewAnchorWidth"];
 	
+	[self removeObserver:self forKeyPath:@"leftViewAnchorWidthType"];
+	[self removeObserver:self forKeyPath:@"rightViewAnchorWidthType"];
+	
+	[self removeObserver:self forKeyPath:@"leftMainAnchorType"];
+	[self removeObserver:self forKeyPath:@"rightMainAnchorType"];
+	
+	[self removeObserver:self forKeyPath:@"leftUnderAnchorType"];
+	[self removeObserver:self forKeyPath:@"rightUnderAnchorType"];
+	
+	[self removeObserver:self forKeyPath:@"undersidePersistencyType"];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
 	
-	[UIView animateWithDuration:duration animations:^{
+	//[UIView animateWithDuration:duration animations:^{
 		[self updateLayout];
-	}];
+	//}];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
@@ -481,14 +493,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if (horizontalCenter < viewCenter) {
 		[self rightViewWillAppear];
 		
-		if ([self rightViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
+		if ([self rightMainAnchorType] == ADMainAnchorTypeResize) {
 			mainViewFrame.size.width += mainViewFrame.origin.x;
 			mainViewFrame.origin.x = 0;
 		}
 	} else if (horizontalCenter > viewCenter) {
 		[self leftViewWillAppear];
 		
-		if ([self leftViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
+		if ([self leftMainAnchorType] == ADMainAnchorTypeResize) {
 			mainViewFrame.size.width -= mainViewFrame.origin.x;
 		}
 	}
@@ -555,7 +567,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//[[[[self mainViewController] view] layer] setBounds:mainViewBounds];
 	//[[[self mainViewController] view] setBounds:mainViewBounds];
 	
-	if ([self leftViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
+	if ([self leftUnderAnchorType] == ADUnderAnchorTypeSlide) {
 		CGRect leftFrame = [[[self leftViewController] view] frame];
 		leftFrame.origin.x = leftFrame.size.width;
 		leftFrame.origin.x *= -1;
@@ -564,7 +576,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		[[[self leftViewController] view] setCenter:leftCenter];
 	}
 	
-	if ([self rightViewSecondaryLayoutType] == ADSecondaryLayoutTypeSlide) {
+	if ([self rightUnderAnchorType] == ADUnderAnchorTypeSlide) {
 		CGRect rightFrame = [[[self rightViewController] view] frame];
 		rightFrame.origin.x = [[self view] bounds].size.width;
 		rightFrame.origin.x -= viewCenter - newCenter;

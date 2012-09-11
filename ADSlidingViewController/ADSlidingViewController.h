@@ -24,20 +24,20 @@ typedef enum {
 
 /* Anchor Layout Type */
 typedef enum {
-	ADAnchorLayoutTypeSlide = 0,
-	ADAnchorLayoutTypeResize = 1
-} ADAnchorLayoutType;
+	ADMainAnchorTypeSlide = 0,
+	ADMainAnchorTypeResize = 1
+} ADMainAnchorType;
 
 /* Secondary Layout Type */
 typedef enum {
-	ADSecondaryLayoutTypeUnderneath = 0,
-	ADSecondaryLayoutTypeSlide = 1
-} ADSecondaryLayoutType;
+	ADUnderAnchorTypeUnderneath = 0,
+	ADUnderAnchorTypeSlide = 1
+} ADUnderAnchorType;
 
 /* Underside Persitency */
 typedef enum {
 	ADUndersidePersistencyTypeNone = 0,
-	ADUndersidePersistencyTypeLandscapeOnly = 1,
+	ADUndersidePersistencyTypeLandscape = 1,
 	ADUndersidePersistencyTypeAlways = 2
 } ADUndersidePersistencyType;
 
@@ -63,39 +63,91 @@ typedef enum {
 @property (nonatomic) UIViewController *leftViewController;
 @property (nonatomic) UIViewController *rightViewController;
 
-/* Layout Properties */
-@property CGFloat leftViewAnchorWidth;
-@property CGFloat rightViewAnchorWidth;
-@property ADAnchorWidthType leftViewAnchorWidthType;
-@property ADAnchorWidthType rightViewAnchorWidthType;
-@property ADAnchorLayoutType leftViewAnchorLayoutType;
-@property ADAnchorLayoutType rightViewAnchorLayoutType;
-@property ADSecondaryLayoutType leftViewSecondaryLayoutType;
-@property ADSecondaryLayoutType rightViewSecondaryLayoutType;
 
-@property ADUndersidePersistencyType undersidePersistencyType;
+/*
+ Left and Right Anchor Widths
+ Defines the distance of anchoring in points.
+ 
+ See Anchor Width Type.
+ */
+@property (nonatomic) CGFloat leftViewAnchorWidth;
+@property (nonatomic) CGFloat rightViewAnchorWidth;
 
-@property BOOL mainViewShouldAllowInteractionsWhenAnchored;
+/*
+ Left and Right Anchor Layout
+ Defines what the anchor width is relative to.
+ 
+ ADAnchorWidthTypePeek: Width defines the amount of main view controller left on the screen.
+ ADAnchorWidthTypeReveal: Width defines the amount of under view controller (right or left) shown on screen.
+ */
+@property (nonatomic) ADAnchorWidthType leftViewAnchorWidthType;
+@property (nonatomic) ADAnchorWidthType rightViewAnchorWidthType;
 
-@property (readonly) ADAnchorSide anchoredToSide;
+/*
+ Left and Right Main Anchor Type.
+ Defines how the main view behaves when moved.
+ 
+ ADMainAnchorTypeSlide: The main view slides across, so part of it is on screen.
+ ADMainAnchorTypeResize: The main view resizes, with the left or right edge staying aligned to the screen edge.
+ */
+@property (nonatomic) ADMainAnchorType leftMainAnchorType;
+@property (nonatomic) ADMainAnchorType rightMainAnchorType;
 
-/* UI Properties */
+/*
+ Left and Right Under Anchor Type.
+ Defines how the left and right views behave when moved.
+ 
+ ADUnderAnchorTypeUnderneath: The view is aligned to its side of the screen, and the main view moves above it.
+ ADUnderAnchorTypeSlide: The view is aligned to one side of the main view, and slides along with it when moved.
+ */
+@property (nonatomic) ADUnderAnchorType leftUnderAnchorType;
+@property (nonatomic) ADUnderAnchorType rightUnderAnchorType;
+
+/*
+ Underside Persistency Type.
+ Defines whether an under view should always be shown.
+ 
+ At least one under view must exist.
+ 
+ ADUndersidePersistencyTypeNone: The under views are only shown when the main view is moved (or resized) aside.
+ ADUndersidePersistencyTypeLandscape: An under view is always shown in landscape, but behaves normally in portrait.
+ ADUndersidePersistencyTypeAlways: An under view is always shown.
+ */
+@property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
+
+/*
+ NOT USED
+ */
+@property (nonatomic) BOOL mainViewShouldAllowInteractionsWhenAnchored;
+
+/*
+ Returns the side that the main view is currently anchored to
+ */
+@property (nonatomic, readonly) ADAnchorSide anchoredToSide;
+
+/*
+ Set to YES to add a shadow under the main view.
+ */
 @property (nonatomic) BOOL showTopViewShadow;
 
 /* Gestures */
-@property (readonly) UITapGestureRecognizer *resetTapGesture;
-@property (readonly) UIPanGestureRecognizer *panGesture;
+@property (nonatomic, readonly) UITapGestureRecognizer *resetTapGesture;
+@property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
 
-/* Methods */
 
-#pragma mark - View Information
+/*
+ Returns YES if the view is visible
+ */
 - (BOOL)leftViewShowing;
 - (BOOL)rightViewShowing;
 
-#pragma mark - Getters
-- (ADAnchorSide)anchoredToSide;
-
-#pragma mark - Anchoring Functions
+/*
+ Anchor the top view to a given side.
+ 
+ @param ADAnchorSide side		The side you wish to anchor to
+ @param BOOL animated			Whether or not to animate the movement.
+ @param void(^)() completion	A block to run on completion. Can be NULL.
+ */
 - (void)anchorTopViewTo:(ADAnchorSide)side;
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated;
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated completion:(void(^)())completion;

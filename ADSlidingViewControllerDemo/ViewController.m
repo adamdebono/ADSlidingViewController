@@ -29,7 +29,7 @@
 	
 	[self setShowTopViewShadow:YES];
 	[self setMainViewShouldAllowInteractionsWhenAnchored:NO];
-	[self setRightViewAnchorLayoutType:ADAnchorLayoutTypeResize];
+	[self setRightMainAnchorType:ADMainAnchorTypeResize];
 }
 
 - (void)didReceiveMemoryWarning
