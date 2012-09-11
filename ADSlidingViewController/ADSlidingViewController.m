@@ -141,6 +141,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[self updateLayout];
 }
 
+- (void)dealloc {
+	
+}
+
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
 	
 	[UIView animateWithDuration:duration animations:^{
@@ -345,6 +349,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
 	if (gestureRecognizer == [self panGesture]) {
+		return NO;
+	}
+	
+	return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+	if ([[touch view] isKindOfClass:[UISlider class]]) {
 		return NO;
 	}
 	
