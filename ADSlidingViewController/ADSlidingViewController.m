@@ -86,7 +86,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	_undersidePersistencyType = kADDefaultUndersidePersistencyType;	
 	
-	_mainViewShouldAllowInteractionsWhenAnchored = kADDefaultMainViewAllowsInteraction;
 	_anchoredToSide = ADAnchorSideCenter;
 }
 
@@ -102,6 +101,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[_resetTapGesture setCancelsTouchesInView:YES];
 	[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
+	[_resetTapGesture setEnabled:NO];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
 	[_panGesture setCancelsTouchesInView:YES];
@@ -153,15 +153,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	[self removeObserver:self forKeyPath:@"leftUnderAnchorType"];
 	[self removeObserver:self forKeyPath:@"rightUnderAnchorType"];
-	
-	[self removeObserver:self forKeyPath:@"undersidePersistencyType"];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-	
-	//[UIView animateWithDuration:duration animations:^{
-		[self updateLayout];
-	//}];
+	[self updateLayout];
+	[self setUndersidePersistencyType:[self undersidePersistencyType]];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
@@ -247,6 +243,18 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	NSLog(@"%@", keyPath);
 	
 	[self updateLayout];
+}
+
+- (void)setUndersidePersistencyType:(ADUndersidePersistencyType)undersidePersistencyType {
+	_undersidePersistencyType = undersidePersistencyType;
+	
+	if ([self anchoredToSide] == ADAnchorSideCenter && [self checkUndersidePersistency]) {
+		if ([self leftViewController]) {
+			[self anchorTopViewTo:ADAnchorSideRight animated:YES];
+		} else {
+			[self anchorTopViewTo:ADAnchorSideLeft animated:YES];
+		}
+	}
 }
 
 - (void)setShowTopViewShadow:(BOOL)showTopViewShadow {
@@ -390,7 +398,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:[self anchoredToSide]];
 	
 	BOOL resetTapEnabled;
-	if ([self anchoredToSide] != ADAnchorSideCenter) {
+	if ([self anchoredToSide] != ADAnchorSideCenter && ![self checkUndersidePersistency]) {
 		resetTapEnabled = YES;
 	} else {
 		resetTapEnabled = NO;
@@ -493,14 +501,19 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if (horizontalCenter < viewCenter) {
 		[self rightViewWillAppear];
 		
-		if ([self rightMainAnchorType] == ADMainAnchorTypeResize) {
+		if ([self checkUndersidePersistency]) {
+			mainViewFrame.size.width -= [[[self rightViewController] view] frame].size.width;
+			mainViewFrame.origin.x = 0;
+		} else if ([self rightMainAnchorType] == ADMainAnchorTypeResize) {
 			mainViewFrame.size.width += mainViewFrame.origin.x;
 			mainViewFrame.origin.x = 0;
 		}
 	} else if (horizontalCenter > viewCenter) {
 		[self leftViewWillAppear];
 		
-		if ([self leftMainAnchorType] == ADMainAnchorTypeResize) {
+		if ([self checkUndersidePersistency]) {
+			mainViewFrame.size.width -= [[[self leftViewController] view] frame].size.width;
+		} else if ([self leftMainAnchorType] == ADMainAnchorTypeResize) {
 			mainViewFrame.size.width -= mainViewFrame.origin.x;
 		}
 	}
@@ -524,6 +537,29 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 - (void)updateMainViewShadowPath {
 	[[[[self mainViewController] view] layer] setShadowPath:[UIBezierPath bezierPathWithRect:[[[self mainViewController] view] bounds]].CGPath];
+}
+
+- (BOOL)checkUndersidePersistency {
+	if ([self undersidePersistencyType] == ADUndersidePersistencyTypeNone) {
+		return NO;
+	}
+	
+	switch ([[UIApplication sharedApplication] statusBarOrientation]) {
+		case UIInterfaceOrientationPortrait:
+		case UIInterfaceOrientationPortraitUpsideDown:
+			if ([self undersidePersistencyType] == ADUndersidePersistencyTypeAlways) {
+				return YES;
+			}
+			break;
+		case UIInterfaceOrientationLandscapeLeft:
+		case UIInterfaceOrientationLandscapeRight:
+			if ([self undersidePersistencyType] >= ADUndersidePersistencyTypeLandscape) {
+				return YES;
+			}
+			break;
+	}
+	
+	return NO;
 }
 
 #pragma mark - Movement
@@ -591,8 +627,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)leftViewWillAppear {
 	NSLog();
 	
-	//[[self view] sendSubviewToBack:[[self rightViewController] view]];
-	[[[self rightViewController] view] setHidden:YES];
+	if ([self checkUndersidePersistency]) {
+		[[self view] sendSubviewToBack:[[self rightViewController] view]];
+		[[[self rightViewController] view] setHidden:NO];
+	} else {
+		[[[self rightViewController] view] setHidden:YES];
+	}
 	[[[self leftViewController] view] setHidden:NO];
 	
 	if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowLeftView:)]) {
@@ -603,8 +643,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)rightViewWillAppear {
 	NSLog();
 	
-	//[[self view] sendSubviewToBack:[[self leftViewController] view]];
-	[[[self leftViewController] view] setHidden:YES];
+	if ([self checkUndersidePersistency]) {
+		[[self view] sendSubviewToBack:[[self leftViewController] view]];
+		[[[self leftViewController] view] setHidden:NO];
+	} else {
+		[[[self leftViewController] view] setHidden:YES];
+	}
 	[[[self rightViewController] view] setHidden:NO];
 	
 	if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowRightView:)]) {
@@ -629,6 +673,29 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated duration:(NSTimeInterval)duration completion:(void (^)())completion {
 	NSLog();
 	
+	if ([self checkUndersidePersistency]) {
+		ADAnchorSide secondSide;
+		if ([self anchoredToSide] == ADAnchorSideLeft) {
+			secondSide = ADAnchorSideRight;
+		} else if ([self anchoredToSide] == ADAnchorSideRight) {
+			secondSide = ADAnchorSideLeft;
+		} else {
+			if ([self leftViewController]) {
+				secondSide = ADAnchorSideRight;
+			} else {
+				secondSide = ADAnchorSideLeft;
+			}
+		}
+		/*if (animated) {
+			void (^secondCompletion)(void) = completion;
+			completion = ^{
+				[self anchorTopViewTo:secondSide animated:animated duration:duration completion:secondCompletion];
+			};
+		} else {*/
+			side = secondSide;
+		//}
+	}
+	
 	//Pre-Animation
 	if (side == ADAnchorSideLeft) {
 		[self rightViewWillAppear];
@@ -649,12 +716,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		[[self view] setUserInteractionEnabled:YES];
 		if (completion) {
 			completion();
-		}
-		
-		if (side != ADAnchorSideCenter) {
-			[_resetTapGesture setEnabled:YES];
-		} else {
-			[_resetTapGesture setEnabled:NO];
 		}
 		
 		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewController:didAnchorToSide:)]) {

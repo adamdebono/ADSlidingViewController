@@ -116,11 +116,6 @@ typedef enum {
 @property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
 
 /*
- NOT USED
- */
-@property (nonatomic) BOOL mainViewShouldAllowInteractionsWhenAnchored;
-
-/*
  Returns the side that the main view is currently anchored to
  */
 @property (nonatomic, readonly) ADAnchorSide anchoredToSide;
@@ -130,7 +125,11 @@ typedef enum {
  */
 @property (nonatomic) BOOL showTopViewShadow;
 
-/* Gestures */
+/*
+ Gestures
+ 
+ NOTE that the resetTapGesture and panGesture will not override everything, such as scroll views. If you wish to have the main view interaction disabled when anchored, you will need to do it manually using the delegate functions. Also note that if you do this, be careful not to disable the view that the gesture is added to, otherwise it will be disabled aswell.
+ */
 @property (nonatomic, readonly) UITapGestureRecognizer *resetTapGesture;
 @property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
 

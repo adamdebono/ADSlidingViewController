@@ -28,7 +28,6 @@
 	[self setRightViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"rightViewController"]];
 	
 	[self setShowTopViewShadow:YES];
-	[self setMainViewShouldAllowInteractionsWhenAnchored:NO];
 	[self setRightMainAnchorType:ADMainAnchorTypeResize];
 }
 
