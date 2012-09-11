@@ -101,7 +101,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[_resetTapGesture setCancelsTouchesInView:YES];
 	[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
-	[_resetTapGesture setEnabled:NO];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
 	[_panGesture setCancelsTouchesInView:YES];
@@ -367,16 +366,32 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	}
 }
 
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-	if (gestureRecognizer == [self panGesture]) {
-		return NO;
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+	if (gestureRecognizer == [self resetTapGesture]) {
+		if ([self anchoredToSide] == ADAnchorSideCenter || [self checkUndersidePersistency]) {
+			return NO;
+		}
+	} else if (gestureRecognizer == [self panGesture]) {
+		
 	}
 	
 	return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-	if ([[touch view] isKindOfClass:[UISlider class]]) {
+	if (gestureRecognizer == [self resetTapGesture]) {
+		
+	} else if (gestureRecognizer == [self panGesture]) {
+		if ([[touch view] isKindOfClass:[UISlider class]]) {
+			return NO;
+		}
+	}
+	
+	return YES;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+	if (gestureRecognizer == [self panGesture]) {
 		return NO;
 	}
 	
@@ -397,16 +412,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//Calculations
 	CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:[self anchoredToSide]];
 	
-	BOOL resetTapEnabled;
-	if ([self anchoredToSide] != ADAnchorSideCenter && ![self checkUndersidePersistency]) {
-		resetTapEnabled = YES;
-	} else {
-		resetTapEnabled = NO;
-	}
-	
 	//Do the stuff
 	[self moveMainViewToHorizontalCenter:newCenter];
-	[[self resetTapGesture] setEnabled:resetTapEnabled];
 }
 
 - (void)updateLeftViewLayout {
