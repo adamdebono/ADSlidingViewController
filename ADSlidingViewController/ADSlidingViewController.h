@@ -22,13 +22,13 @@ typedef enum {
 	ADAnchorWidthTypeReveal = 1
 } ADAnchorWidthType;
 
-/* Anchor Layout Type */
+/* Main Anchor Type */
 typedef enum {
 	ADMainAnchorTypeSlide = 0,
 	ADMainAnchorTypeResize = 1
 } ADMainAnchorType;
 
-/* Secondary Layout Type */
+/* Under Layout Type */
 typedef enum {
 	ADUnderAnchorTypeUnderneath = 0,
 	ADUnderAnchorTypeSlide = 1
@@ -108,6 +108,7 @@ typedef enum {
  Defines whether an under view should always be shown.
  
  At least one under view must exist.
+ Using ADMainAnchorTypeResize behaves unpredictably and is not supported.
  
  ADUndersidePersistencyTypeNone: The under views are only shown when the main view is moved (or resized) aside.
  ADUndersidePersistencyTypeLandscape: An under view is always shown in landscape, but behaves normally in portrait.

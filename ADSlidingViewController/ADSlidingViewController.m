@@ -10,8 +10,6 @@
 
 #import "ADSlidingViewController.h"
 
-#define UseExtraCalculations
-
 #pragma mark - UIViewController Extension
 @implementation UIViewController (ADSlidingViewController)
 - (ADSlidingViewController *)slidingViewController {
@@ -155,8 +153,29 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-	[self updateLayout];
-	[self setUndersidePersistencyType:[self undersidePersistencyType]];
+	if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
+		if ([self undersidePersistencyType] >= ADUndersidePersistencyTypeLandscape) {
+			if ([self anchoredToSide] == ADAnchorSideCenter) {
+				[self anchorTopViewTo:[self whatSideForUndersidePersistencyOnSide:ADAnchorSideCenter] animated:NO];
+			} else {
+				[self updateLayout];
+			}
+		} else {
+			[self updateLayout];
+		}
+	} else {
+		if ([self undersidePersistencyType] == ADUndersidePersistencyTypeAlways) {
+			if ([self anchoredToSide] == ADAnchorSideCenter) {
+				[self anchorTopViewTo:[self whatSideForUndersidePersistencyOnSide:ADAnchorSideCenter] animated:NO];
+			} else {
+				[self updateLayout];
+			}
+		} else if ([self undersidePersistencyType] == ADUndersidePersistencyTypeLandscape && [self anchoredToSide] != ADAnchorSideCenter) {
+			[self anchorTopViewTo:ADAnchorSideCenter animated:NO];
+		} else {
+			[self updateLayout];
+		}
+	}
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
@@ -297,33 +316,29 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		CGFloat newCenter = initialViewCenterX + panAmount;
 		CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
 
-#ifdef UseExtraCalculations
-		//Calculate Elastic
-		CGFloat viewWidth;
-		CGFloat extra;
-		int multiple = 1;
-		if (newCenter > viewCenter) {
-			viewWidth = [[[self leftViewController] view] frame].size.width;
-		} else {
-			viewWidth = [[[self rightViewController] view] frame].size.width;
-			multiple = -1;
-		}
-		CGFloat delta = abs(viewCenter - newCenter);
-		if (delta > viewWidth) {
-			CGFloat elasticity = 100;
-			CGFloat proportion = (delta - viewWidth) / elasticity;
-			
-			CGFloat equation;
-			equation = tanh(proportion/2) * elasticity;
-			
-			extra = viewWidth + equation;
-			newCenter = viewCenter + extra * multiple;
-		}
-#endif
-		
 		//Check the view we are panning to exists
 		if ((newCenter > viewCenter && ![self leftViewController]) || (newCenter < viewCenter && ![self rightViewController])) {
 			newCenter = viewCenter;
+		} else {
+			//Calculate Elastic
+			CGFloat maxCenter;
+			int multiple = 1;
+			if (newCenter > viewCenter) {
+				maxCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:ADAnchorSideRight];
+			} else {
+				maxCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:ADAnchorSideLeft];
+				multiple = -1;
+			}
+			CGFloat delta = abs(viewCenter - newCenter);
+			CGFloat maxDelta = abs(viewCenter - maxCenter);
+			CGFloat extra = delta - maxDelta;
+			if (extra > 0) {
+				extra = tanh(extra / 100) * 100;
+				//extra /= 2;
+				newCenter = viewCenter + (maxDelta + extra) * multiple;
+			} else {
+				//newCenter = newCenter
+			}
 		}
 		
 		[self moveMainViewToHorizontalCenter:newCenter];
@@ -333,32 +348,52 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		ADAnchorSide side;
 		
 		NSTimeInterval duration;
-		if (velocity > -100 && velocity < 100) {
-			side = [self anchoredToSide];
-			
-			duration = kADViewAnimationTime;
-		} else {
-			if ([self leftViewShowing] && velocity > 0) {
+		if (velocity > 100) {//moving -> this way
+			if ([self anchoredToSide] == ADAnchorSideLeft) {
+				side = ADAnchorSideCenter;
+			} else if ([self anchoredToSide] == ADAnchorSideRight) {
 				side = ADAnchorSideRight;
-			} else if ([self rightViewShowing] && velocity < 0) {
+			} else {
+				side = ADAnchorSideRight;
+			}
+		} else if (velocity < -100) {//moving <- that way
+			if ([self anchoredToSide] == ADAnchorSideRight) {
+				side = ADAnchorSideCenter;
+			} else if ([self anchoredToSide] == ADAnchorSideLeft) {
 				side = ADAnchorSideLeft;
 			} else {
-				side = ADAnchorSideCenter;
+				side = ADAnchorSideLeft;
 			}
-#ifdef UseExtraCalculations			
-			if ([self anchoredToSide] == side) {
-				duration = kADViewAnimationTime;
+		} else {//not moving fast enough, move to the closest side
+			CGFloat width = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:ADAnchorSideRight] - [self calculateMainViewHorizontalCenterWhenAnchoredToSide:ADAnchorSideLeft];
+			CGFloat center = currentMainViewCenterX - ([[self view] bounds].size.width - width) / 2;
+			double percentage = center / width;
+			if ([self checkUndersidePersistency]) {
+				if (percentage < 1) {
+					side = ADAnchorSideLeft;
+				} else {
+					side = ADAnchorSideRight;
+				}
 			} else {
-				CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:side];
-				double distance = fabs(newCenter - currentMainViewCenterX);
-				duration = distance / fabs(velocity);
-				if (duration > 0.4) {
-					duration = 0.4;
+				if (percentage < 0.25) {
+					side = ADAnchorSideLeft;
+				} else if (percentage > 0.75) {
+					side = ADAnchorSideRight;
+				} else {
+					side = ADAnchorSideCenter;
 				}
 			}
-#else
+		}
+		side = [self whatSideForUndersidePersistencyOnSide:side];
+		if ([self anchoredToSide] == side) {
 			duration = kADViewAnimationTime;
-#endif
+		} else {
+			CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:side];
+			double distance = fabs(newCenter - currentMainViewCenterX);
+			duration = distance / fabs(velocity);
+			if (duration > 0.4) {
+				duration = 0.4;
+			}
 		}
 		
 		NSLog(@"Finished Pan Gesture: velocity = %f, duration %f", velocity, duration);
@@ -391,7 +426,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-	if (gestureRecognizer == [self panGesture]) {
+	if (gestureRecognizer == [self resetTapGesture]) {
+		if (otherGestureRecognizer == [self panGesture]) {
+			return NO;
+		}
+	} else if (gestureRecognizer == [self panGesture]) {
 		return NO;
 	}
 	
@@ -469,32 +508,50 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (CGFloat)calculateMainViewHorizontalCenterWhenAnchoredToSide:(ADAnchorSide)side {
 	//Calculations
 	CGFloat horizontalCenter = CGRectGetMidX([[self view] bounds]);
+	CGFloat viewWidth = [[self view] bounds].size.width;
 	CGFloat newCenter = 0;//[[[self mainViewController] view] center].x;
 	
-	if (side == ADAnchorSideCenter) {
-		newCenter = horizontalCenter;
-	} else if (side == ADAnchorSideLeft) {//showing the right side
-		CGFloat distance = 0;
-		switch ([self rightViewAnchorWidthType]) {
-			case ADAnchorWidthTypePeek:
-				distance = [[self view] bounds].size.width - [self rightViewAnchorWidth];
-				break;
-			case ADAnchorWidthTypeReveal:
-				distance = [self rightViewAnchorWidth];
-				break;
+	if ([self checkUndersidePersistency]) {
+		if (side == ADAnchorSideLeft) {
+			newCenter = horizontalCenter;
+		} else if (side == ADAnchorSideRight) {
+			CGFloat width = 0;
+			switch ([self leftViewAnchorWidthType]) {
+				case ADAnchorWidthTypePeek:
+					width = viewWidth - [self leftViewAnchorWidth];
+					break;
+				case ADAnchorWidthTypeReveal:
+					width = [self leftViewAnchorWidth];
+					break;
+			}
+			newCenter = horizontalCenter + width;
 		}
-		newCenter = horizontalCenter - distance;
-	} else if (side == ADAnchorSideRight) {//showing the left side
-		CGFloat distance = 0;
-		switch ([self leftViewAnchorWidthType]) {
-			case ADAnchorWidthTypePeek:
-				distance = [[self view] bounds].size.width - [self leftViewAnchorWidth];
-				break;
-			case ADAnchorWidthTypeReveal:
-				distance = [self leftViewAnchorWidth];
-				break;
+	} else {
+		if (side == ADAnchorSideCenter) {
+			newCenter = horizontalCenter;
+		} else if (side == ADAnchorSideLeft) {//showing the right side
+			CGFloat distance = 0;
+			switch ([self rightViewAnchorWidthType]) {
+				case ADAnchorWidthTypePeek:
+					distance = viewWidth - [self rightViewAnchorWidth];
+					break;
+				case ADAnchorWidthTypeReveal:
+					distance = [self rightViewAnchorWidth];
+					break;
+			}
+			newCenter = horizontalCenter - distance;
+		} else if (side == ADAnchorSideRight) {//showing the left side
+			CGFloat distance = 0;
+			switch ([self leftViewAnchorWidthType]) {
+				case ADAnchorWidthTypePeek:
+					distance = viewWidth - [self leftViewAnchorWidth];
+					break;
+				case ADAnchorWidthTypeReveal:
+					distance = [self leftViewAnchorWidth];
+					break;
+			}
+			newCenter = horizontalCenter + distance;
 		}
-		newCenter = horizontalCenter + distance;
 	}
 	
 	return newCenter;
@@ -510,7 +567,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		
 		if ([self checkUndersidePersistency]) {
 			mainViewFrame.size.width -= [[[self rightViewController] view] frame].size.width;
-			mainViewFrame.origin.x = 0;
 		} else if ([self rightMainAnchorType] == ADMainAnchorTypeResize) {
 			mainViewFrame.size.width += mainViewFrame.origin.x;
 			mainViewFrame.origin.x = 0;
@@ -522,6 +578,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			mainViewFrame.size.width -= [[[self leftViewController] view] frame].size.width;
 		} else if ([self leftMainAnchorType] == ADMainAnchorTypeResize) {
 			mainViewFrame.size.width -= mainViewFrame.origin.x;
+		}
+	} else {
+		if ([self checkUndersidePersistency]) {
+			mainViewFrame.size.width -= [[[self leftViewController] view] frame].size.width;
 		}
 	}
 	
@@ -567,6 +627,23 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	}
 	
 	return NO;
+}
+
+- (ADAnchorSide)whatSideForUndersidePersistencyOnSide:(ADAnchorSide)side {
+	if (side == ADAnchorSideCenter && [self checkUndersidePersistency]) {
+		if ([self anchoredToSide] == ADAnchorSideLeft) {
+			return ADAnchorSideRight;
+		} else if ([self anchoredToSide] == ADAnchorSideRight) {
+			return ADAnchorSideLeft;
+		} else {
+			if ([self leftViewController]) {
+				return ADAnchorSideRight;
+			} else {
+				return ADAnchorSideLeft;
+			}
+		}
+	}
+	return side;
 }
 
 #pragma mark - Movement
@@ -680,28 +757,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated duration:(NSTimeInterval)duration completion:(void (^)())completion {
 	NSLog();
 	
-	if ([self checkUndersidePersistency]) {
-		ADAnchorSide secondSide;
-		if ([self anchoredToSide] == ADAnchorSideLeft) {
-			secondSide = ADAnchorSideRight;
-		} else if ([self anchoredToSide] == ADAnchorSideRight) {
-			secondSide = ADAnchorSideLeft;
-		} else {
-			if ([self leftViewController]) {
-				secondSide = ADAnchorSideRight;
-			} else {
-				secondSide = ADAnchorSideLeft;
-			}
-		}
-		/*if (animated) {
-			void (^secondCompletion)(void) = completion;
-			completion = ^{
-				[self anchorTopViewTo:secondSide animated:animated duration:duration completion:secondCompletion];
-			};
-		} else {*/
-			side = secondSide;
-		//}
-	}
+	side = [self whatSideForUndersidePersistencyOnSide:side];
 	
 	//Pre-Animation
 	if (side == ADAnchorSideLeft) {
@@ -715,7 +771,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Animation Block
 	void (^animations)() = ^{
-		[self updateMainViewLayout];
+		[self updateLayout];
 	};
 	
 	//Completion Block
