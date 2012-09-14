@@ -25,7 +25,7 @@
 	
 	[self setMainViewController:mainvc];
 	[self setLeftViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"leftViewController"]];
-	[self setRightViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"rightViewController"]];
+	//[self setRightViewController:[[UIStoryboard storyboardWithName:@"SlidingViews" bundle:nil] instantiateViewControllerWithIdentifier:@"rightViewController"]];
 	
 	[self setShowTopViewShadow:YES];
 	[self setRightMainAnchorType:ADMainAnchorTypeResize];
