@@ -105,7 +105,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[_panGesture setDelaysTouchesBegan:YES];
 	[_panGesture setDelegate:self];
 	
-	
 	/* Key-Value Observation */
 	[self addObserver:self forKeyPath:@"leftViewAnchorWidth" options:NSKeyValueObservingOptionNew context:nil];
 	[self addObserver:self forKeyPath:@"rightViewAnchorWidth" options:NSKeyValueObservingOptionNew context:nil];
@@ -153,6 +152,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+	NSLog();
+	
+	[super willAnimateRotationToInterfaceOrientation:toInterfaceOrientation duration:duration];
+	
 	if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
 		if ([self undersidePersistencyType] >= ADUndersidePersistencyTypeLandscape) {
 			if ([self anchoredToSide] == ADAnchorSideCenter) {
