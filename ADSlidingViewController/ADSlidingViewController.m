@@ -96,13 +96,13 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
-	[_resetTapGesture setCancelsTouchesInView:YES];
-	[_resetTapGesture setDelaysTouchesBegan:YES];
+	//[_resetTapGesture setCancelsTouchesInView:YES];
+	//[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
-	[_panGesture setCancelsTouchesInView:YES];
-	[_panGesture setDelaysTouchesBegan:YES];
+	//[_panGesture setCancelsTouchesInView:YES];
+	//[_panGesture setDelaysTouchesBegan:YES];
 	[_panGesture setDelegate:self];
 	
 	
@@ -150,6 +150,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	[self removeObserver:self forKeyPath:@"leftUnderAnchorType"];
 	[self removeObserver:self forKeyPath:@"rightUnderAnchorType"];
+	
+	[self removeObserver:self forKeyPath:@"undersidePersistencyType"];
 }
 
 - (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
