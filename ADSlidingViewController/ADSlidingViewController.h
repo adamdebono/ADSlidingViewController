@@ -50,7 +50,9 @@ typedef enum {
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController didAnchorToSide:(ADAnchorSide)side;
 
 - (void)ADSlidingViewControllerWillShowLeftView:(ADSlidingViewController *)slidingViewController;
+- (void)ADSlidingViewControllerWillHideLeftView:(ADSlidingViewController *)slidingViewController;
 - (void)ADSlidingViewControllerWillShowRightView:(ADSlidingViewController *)slidingViewController;
+- (void)ADSlidingViewControllerWillHideRightView:(ADSlidingViewController *)slidingViewController;
 @end
 
 

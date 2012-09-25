@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A263526F15EE493D0061D9A8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A263526E15EE493D0061D9A8 /* QuartzCore.framework */; };
 		A263527115EE495A0061D9A8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A263526E15EE493D0061D9A8 /* QuartzCore.framework */; };
+		A295AA1D16043A370083EAC3 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A295AA1C16043A370083EAC3 /* Default-568h@2x.png */; };
 		A2C5265015CA8166007DB2B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2C5264F15CA8166007DB2B9 /* Foundation.framework */; };
 		A2C5265515CA8166007DB2B9 /* ADSlidingViewController.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A2C5265415CA8166007DB2B9 /* ADSlidingViewController.h */; };
 		A2C5265715CA8166007DB2B9 /* ADSlidingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A2C5265615CA8166007DB2B9 /* ADSlidingViewController.m */; };
@@ -53,6 +54,7 @@
 /* Begin PBXFileReference section */
 		A263526E15EE493D0061D9A8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A282675515DBB7FC003E9A43 /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.md; sourceTree = "<group>"; };
+		A295AA1C16043A370083EAC3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A2C5264C15CA8166007DB2B9 /* libADSlidingViewController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libADSlidingViewController.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C5264F15CA8166007DB2B9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A2C5265315CA8166007DB2B9 /* ADSlidingViewController-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ADSlidingViewController-Prefix.pch"; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 		A2C5264115CA8166007DB2B9 = {
 			isa = PBXGroup;
 			children = (
+				A295AA1C16043A370083EAC3 /* Default-568h@2x.png */,
 				A263526E15EE493D0061D9A8 /* QuartzCore.framework */,
 				A282675515DBB7FC003E9A43 /* Readme.md */,
 				A2C5265115CA8166007DB2B9 /* ADSlidingViewController */,
@@ -253,6 +256,7 @@
 				A2C5267715CA81DF007DB2B9 /* MainStoryboard_iPhone.storyboard in Resources */,
 				A2C5267A15CA81DF007DB2B9 /* MainStoryboard_iPad.storyboard in Resources */,
 				A2C526A015CAA14C007DB2B9 /* SlidingViews.storyboard in Resources */,
+				A295AA1D16043A370083EAC3 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

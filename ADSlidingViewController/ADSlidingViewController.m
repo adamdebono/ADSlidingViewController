@@ -31,6 +31,9 @@
 	CGFloat currentMainViewCenterX;
 }
 
+@property (nonatomic) BOOL leftViewHasAppeared;
+@property (nonatomic) BOOL rightViewHasAppeared;
+
 @end
 
 /* Default Values */
@@ -85,6 +88,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_undersidePersistencyType = kADDefaultUndersidePersistencyType;	
 	
 	_anchoredToSide = ADAnchorSideCenter;
+	
+	_leftViewHasAppeared = NO;
+	_rightViewHasAppeared = NO;
 }
 
 - (void)viewDidLoad {
@@ -587,7 +593,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	mainViewFrame.origin.x = horizontalCenter - viewCenter;
 	
 	void (^rightView)(void) = ^{
-		[self rightViewWillAppear];
+		//[self rightViewWillAppear];
 		
 		if ([self checkUndersidePersistency]) {
 			mainViewFrame.size.width -= [[[self rightViewController] view] frame].size.width;
@@ -598,7 +604,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	};
 	
 	void (^leftView)(void) = ^{
-		[self leftViewWillAppear];
+		//[self leftViewWillAppear];
 		
 		if ([self checkUndersidePersistency]) {
 			mainViewFrame.size.width -= [[[self leftViewController] view] frame].size.width;
@@ -712,6 +718,19 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//mainViewBounds.size = mainViewFrame.size;
 	//CGPoint theCenter = CGPointMake(CGRectGetMidX(mainViewFrame), CGRectGetMidY(mainViewFrame));
 	
+	if (mainViewFrame.origin.x > 0) {
+		[self leftViewWillAppear];
+	} else {
+		[self leftViewWillHide];
+	}
+	/*** LETS SEE IF WERE IN AN ANIMATION BLOCK ***/
+	
+	if (mainViewFrame.origin.x + mainViewFrame.size.width < [[self view] bounds].size.width) {
+		[self rightViewWillAppear];
+	} else {
+		[self rightViewWillHide];
+	}
+	
 	[[[self mainViewController] view] setFrame:mainViewFrame];
 	//[[[self mainViewController] view] setBounds:mainViewBounds];
 	//[[[self mainViewController] view] setCenter:theCenter];
@@ -745,32 +764,54 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)leftViewWillAppear {
 	NSLog();
 	
-	if ([self checkUndersidePersistency]) {
+	if (!_leftViewHasAppeared) {
+		_leftViewHasAppeared = YES;
+		[[[self leftViewController] view] setHidden:NO];
 		[[self view] sendSubviewToBack:[[self rightViewController] view]];
-		[[[self rightViewController] view] setHidden:NO];
-	} else {
-		[[[self rightViewController] view] setHidden:YES];
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowLeftView:)]) {
+			[[self delegate] ADSlidingViewControllerWillShowLeftView:self];
+		}
 	}
-	[[[self leftViewController] view] setHidden:NO];
+}
+
+- (void)leftViewWillHide {
+	NSLog();
 	
-	if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowLeftView:)]) {
-		[[self delegate] ADSlidingViewControllerWillShowLeftView:self];
+	if (_leftViewHasAppeared) {
+		_leftViewHasAppeared = NO;
+		[[[self leftViewController] view] setHidden:YES];
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillHideLeftView:)]) {
+			[[self delegate] ADSlidingViewControllerWillHideLeftView:self];
+		}
 	}
 }
 
 - (void)rightViewWillAppear {
 	NSLog();
 	
-	if ([self checkUndersidePersistency]) {
+	if (!_rightViewHasAppeared) {
+		_rightViewHasAppeared = YES;
+		[[[self rightViewController] view] setHidden:NO];
 		[[self view] sendSubviewToBack:[[self leftViewController] view]];
-		[[[self leftViewController] view] setHidden:NO];
-	} else {
-		[[[self leftViewController] view] setHidden:YES];
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowRightView:)]) {
+			[[self delegate] ADSlidingViewControllerWillShowRightView:self];
+		}
 	}
-	[[[self rightViewController] view] setHidden:NO];
+}
+
+- (void)rightViewWillHide {
+	NSLog();
 	
-	if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowRightView:)]) {
-		[[self delegate] ADSlidingViewControllerWillShowRightView:self];
+	if (_rightViewHasAppeared) {
+		_rightViewHasAppeared = NO;
+		[[[self rightViewController] view] setHidden:YES];
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillHideRightView:)]) {
+			[[self delegate] ADSlidingViewControllerWillHideRightView:self];
+		}
 	}
 }
 
@@ -805,11 +846,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	}
 	
 	//Pre-Animation
-	if (side == ADAnchorSideLeft) {
+	/*if (side == ADAnchorSideLeft) {
 		[self rightViewWillAppear];
 	} else if (side == ADAnchorSideRight) {
 		[self leftViewWillAppear];
-	}
+	}*/
 	
 	_anchoredToSide = side;
 	[[self view] setUserInteractionEnabled:NO];
