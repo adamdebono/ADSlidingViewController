@@ -638,12 +638,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	} else {
 		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
 	}
-	
-	[self updateMainViewShadowPath];
-}
-
-- (void)updateMainViewShadowPath {
-	[[[[self mainViewController] view] layer] setShadowPath:[UIBezierPath bezierPathWithRect:[[[self mainViewController] view] bounds]].CGPath];
 }
 
 - (BOOL)checkUndersidePersistency {
@@ -757,8 +751,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		//[[[self rightViewController] view] setCenter:rightCenter];
 		[[[self rightViewController] view] setFrame:rightFrame];
 	}
-	
-	[self updateMainViewShadowPath];
 }
 
 - (void)leftViewWillAppear {
@@ -855,14 +847,27 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_anchoredToSide = side;
 	[[self view] setUserInteractionEnabled:NO];
 	
+	__block BOOL leftAfterHidden;
+	__block BOOL rightAfterHidden;
+	
 	//Animation Block
 	void (^animations)() = ^{
 		[self updateLayout];
+		
+		leftAfterHidden = [[[self leftViewController] view] isHidden];
+		[[[self leftViewController] view] setHidden:NO];
+		
+		rightAfterHidden = [[[self rightViewController] view] isHidden];
+		[[[self rightViewController] view] setHidden:NO];
 	};
 	
 	//Completion Block
 	void (^acompletion)(BOOL finished) = ^(BOOL finished) {
+		[[[self leftViewController] view] setHidden:leftAfterHidden];
+		[[[self rightViewController] view] setHidden:rightAfterHidden];
+		
 		[[self view] setUserInteractionEnabled:YES];
+		
 		if (completion) {
 			completion();
 		}
