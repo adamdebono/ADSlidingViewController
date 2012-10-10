@@ -102,12 +102,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
-	//[_resetTapGesture setCancelsTouchesInView:YES];
+	[_resetTapGesture setCancelsTouchesInView:YES];
 	//[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
-	//[_panGesture setCancelsTouchesInView:YES];
+	[_panGesture setCancelsTouchesInView:YES];
 	//[_panGesture setDelaysTouchesBegan:YES];
 	[_panGesture setDelegate:self];
 	
@@ -221,6 +221,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		[self updateMainViewLayout];
 		
 		[[self view] addSubview:[[self mainViewController] view]];
+		
+		[[[[self mainViewController] view] layer] setShouldRasterize:YES];
+		[[[[self mainViewController] view] layer] setRasterizationScale:2.0];
 	}
 }
 
