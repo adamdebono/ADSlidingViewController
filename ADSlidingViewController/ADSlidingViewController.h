@@ -10,36 +10,36 @@
 #import <UIKit/UIKit.h>
 
 /* Anchor Side */
-typedef enum {
+typedef NS_ENUM(NSInteger, ADAnchorSide) {
 	ADAnchorSideLeft = 0,
 	ADAnchorSideCenter = 1,
 	ADAnchorSideRight = 2
-} ADAnchorSide;
+};
 
 /* Anchor Width Type */
-typedef enum {
+typedef NS_ENUM(NSInteger, ADAnchorWidthType) {
 	ADAnchorWidthTypePeek = 0,
 	ADAnchorWidthTypeReveal = 1
-} ADAnchorWidthType;
+};
 
 /* Main Anchor Type */
-typedef enum {
+typedef NS_ENUM(NSInteger, ADMainAnchorType) {
 	ADMainAnchorTypeSlide = 0,
 	ADMainAnchorTypeResize = 1
-} ADMainAnchorType;
+};
 
 /* Under Layout Type */
-typedef enum {
+typedef NS_ENUM(NSInteger, ADUnderAnchorType) {
 	ADUnderAnchorTypeUnderneath = 0,
 	ADUnderAnchorTypeSlide = 1
-} ADUnderAnchorType;
+};
 
 /* Underside Persitency */
-typedef enum {
+typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 	ADUndersidePersistencyTypeNone = 0,
 	ADUndersidePersistencyTypeLandscape = 1,
 	ADUndersidePersistencyTypeAlways = 2
-} ADUndersidePersistencyType;
+};
 
 /* Delegate */
 @class ADSlidingViewController;
@@ -138,7 +138,7 @@ typedef enum {
 /*
  Gestures
  
- NOTE that the resetTapGesture and panGesture will not override everything, such as scroll views. If you wish to have the main view interaction disabled when anchored, you will need to do it manually using the delegate functions. Also note that if you do this, be careful not to disable the view that the gesture is added to, otherwise it will be disabled aswell.
+ NOTE that the resetTapGesture and panGesture will not override everything, such as scroll views. If you wish to have the main view interaction disabled when anchored, you will need to do it manually using the delegate functions.
  */
 @property (nonatomic, readonly) UITapGestureRecognizer *resetTapGesture;
 @property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
