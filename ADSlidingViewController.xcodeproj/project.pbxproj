@@ -108,7 +108,6 @@
 			isa = PBXGroup;
 			children = (
 				A295AA1C16043A370083EAC3 /* Default-568h@2x.png */,
-				A263526E15EE493D0061D9A8 /* QuartzCore.framework */,
 				A282675515DBB7FC003E9A43 /* Readme.md */,
 				A2C5265115CA8166007DB2B9 /* ADSlidingViewController */,
 				A2C5266915CA81DF007DB2B9 /* ADSlidingViewControllerDemo */,
@@ -129,6 +128,7 @@
 		A2C5264E15CA8166007DB2B9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A263526E15EE493D0061D9A8 /* QuartzCore.framework */,
 				A2C5264F15CA8166007DB2B9 /* Foundation.framework */,
 				A2C5265D15CA81AA007DB2B9 /* UIKit.framework */,
 				A2C5266715CA81DF007DB2B9 /* CoreGraphics.framework */,

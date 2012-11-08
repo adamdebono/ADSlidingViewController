@@ -49,10 +49,17 @@ typedef enum {
 //Anchoring
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController didAnchorToSide:(ADAnchorSide)side;
 
-- (void)ADSlidingViewControllerWillShowLeftView:(ADSlidingViewController *)slidingViewController;
-- (void)ADSlidingViewControllerWillHideLeftView:(ADSlidingViewController *)slidingViewController;
-- (void)ADSlidingViewControllerWillShowRightView:(ADSlidingViewController *)slidingViewController;
-- (void)ADSlidingViewControllerWillHideRightView:(ADSlidingViewController *)slidingViewController;
+
+- (void)slidingViewControllerWillShowLeftView:(ADSlidingViewController *)slidingViewController;
+- (void)slidingViewControllerDidShowLeftView:(ADSlidingViewController *)slidingViewController;
+- (void)slidingViewControllerWillHideLeftView:(ADSlidingViewController *)slidingViewController;
+- (void)slidingViewControllerDidHideLeftView:(ADSlidingViewController *)slidingViewController;
+
+- (void)slidingViewControllerWillShowRightView:(ADSlidingViewController *)slidingViewController;
+- (void)slidingViewControllerDidShowRightView:(ADSlidingViewController *)slidingViewController;
+- (void)slidingViewControllerWillHideRightView:(ADSlidingViewController *)slidingViewController;
+- (void)slidingViewControllerDidHideRightView:(ADSlidingViewController *)slidingViewController;
+
 @end
 
 

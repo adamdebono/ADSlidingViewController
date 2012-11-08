@@ -684,53 +684,34 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 #pragma mark - Movement
 
-- (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter {	
+- (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter {
+	[self moveMainViewToHorizontalCenter:newCenter hidingViews:YES];
+}
+
+- (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter hidingViews:(BOOL)hideViews {
 	currentMainViewCenterX = newCenter;
-	
-	/*CGRect mainViewFrame = [[self view] bounds];
-	CGFloat viewCenter = CGRectGetMidX(mainViewFrame);
-	
-	mainViewFrame.origin.x = newCenter - viewCenter;
-	if (newCenter < viewCenter) {
-		[self rightViewWillAppear];
-		
-		if ([self rightViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
-			mainViewFrame.size.width += mainViewFrame.origin.x;
-			mainViewFrame.origin.x = 0;
-		}
-	} else if (newCenter > viewCenter) {
-		[self leftViewWillAppear];
-		
-		if ([self leftViewAnchorLayoutType] == ADAnchorLayoutTypeResize) {
-			mainViewFrame.size.width -= mainViewFrame.origin.x;
-		}
-	}*/
 	CGRect mainViewFrame = [self calculateMainViewFrameForHorizontalCenter:newCenter];
 	CGFloat viewCenter = CGRectGetMidX([[self view] bounds]);
 	
-	//CGRect mainViewBounds = CGRectZero;
-	//mainViewBounds.size = mainViewFrame.size;
-	//CGPoint theCenter = CGPointMake(CGRectGetMidX(mainViewFrame), CGRectGetMidY(mainViewFrame));
-	
-	if (mainViewFrame.origin.x > 0) {
-		[self leftViewWillAppear];
-	} else {
-		[self leftViewWillHide];
-	}
-	
-	if (mainViewFrame.origin.x + mainViewFrame.size.width < [[self view] bounds].size.width) {
-		[self rightViewWillAppear];
-	} else {
-		[self rightViewWillHide];
+	if (hideViews) {
+		if (mainViewFrame.origin.x > 0) {
+			[self leftViewWillAppear];
+			[self leftViewDidAppear];
+		} else {
+			[self leftViewWillDisappear];
+			[self leftViewDidDisappear];
+		}
+		
+		if (mainViewFrame.origin.x + mainViewFrame.size.width < [[self view] bounds].size.width) {
+			[self rightViewWillAppear];
+			[self rightViewDidAppear];
+		} else {
+			[self rightViewWillDisappear];
+			[self rightViewDidDisappear];
+		}
 	}
 	
 	[[[self mainViewController] view] setFrame:mainViewFrame];
-	//[[[self mainViewController] view] setBounds:mainViewBounds];
-	//[[[self mainViewController] view] setCenter:theCenter];
-	
-	//[[[[self mainViewController] view] layer] setFrame:mainViewFrame];
-	//[[[[self mainViewController] view] layer] setBounds:mainViewBounds];
-	//[[[self mainViewController] view] setBounds:mainViewBounds];
 	
 	if ([self leftUnderAnchorType] == ADUnderAnchorTypeSlide) {
 		CGRect leftFrame = [[[self leftViewController] view] frame];
@@ -745,35 +726,56 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		CGRect rightFrame = [[[self rightViewController] view] frame];
 		rightFrame.origin.x = [[self view] bounds].size.width;
 		rightFrame.origin.x -= viewCenter - newCenter;
-		//CGPoint rightCenter = CGPointMake(CGRectGetMidX(rightFrame), CGRectGetMidY(rightFrame));
-		//[[[self rightViewController] view] setCenter:rightCenter];
 		[[[self rightViewController] view] setFrame:rightFrame];
 	}
 }
+
+#pragma mark -
 
 - (void)leftViewWillAppear {
 	if (!_leftViewHasAppeared) {
 		NSLog();
 		
-		_leftViewHasAppeared = YES;
 		[[[self leftViewController] view] setHidden:NO];
 		[[self view] sendSubviewToBack:[[self rightViewController] view]];
 		
-		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowLeftView:)]) {
-			[[self delegate] ADSlidingViewControllerWillShowLeftView:self];
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerWillShowLeftView:)]) {
+			[[self delegate] slidingViewControllerWillShowLeftView:self];
 		}
 	}
 }
 
-- (void)leftViewWillHide {
+- (void)leftViewDidAppear {
+	if (!_leftViewHasAppeared) {
+		NSLog();
+		
+		_leftViewHasAppeared = YES;
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerDidShowLeftView:)]) {
+			[[self delegate] slidingViewControllerDidShowLeftView:self];
+		}
+	}
+}
+
+- (void)leftViewWillDisappear {
+	if (_leftViewHasAppeared) {
+		NSLog();
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerWillHideLeftView:)]) {
+			[[self delegate] slidingViewControllerWillHideLeftView:self];
+		}
+	}
+}
+
+- (void)leftViewDidDisappear {
 	if (_leftViewHasAppeared) {
 		NSLog();
 		
 		_leftViewHasAppeared = NO;
 		[[[self leftViewController] view] setHidden:YES];
 		
-		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillHideLeftView:)]) {
-			[[self delegate] ADSlidingViewControllerWillHideLeftView:self];
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerDidHideLeftView:)]) {
+			[[self delegate] slidingViewControllerDidHideLeftView:self];
 		}
 	}
 }
@@ -782,25 +784,46 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if (!_rightViewHasAppeared) {
 		NSLog();
 		
-		_rightViewHasAppeared = YES;
 		[[[self rightViewController] view] setHidden:NO];
 		[[self view] sendSubviewToBack:[[self leftViewController] view]];
 		
-		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillShowRightView:)]) {
-			[[self delegate] ADSlidingViewControllerWillShowRightView:self];
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerWillShowRightView:)]) {
+			[[self delegate] slidingViewControllerWillShowRightView:self];
 		}
 	}
 }
 
-- (void)rightViewWillHide {
+- (void)rightViewDidAppear {
+	if (![self rightViewHasAppeared]) {
+		NSLog();
+		
+		_rightViewHasAppeared = YES;
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerDidShowRightView:)]) {
+			[[self delegate] slidingViewControllerDidShowRightView:self];
+		}
+	}
+}
+
+- (void)rightViewWillDisappear {
 	if (_rightViewHasAppeared) {
+		NSLog();
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerWillHideRightView:)]) {
+			[[self delegate] slidingViewControllerWillHideRightView:self];
+		}
+	}
+}
+
+- (void)rightViewDidDisappear {
+	if ([self rightViewHasAppeared]) {
 		NSLog();
 		
 		_rightViewHasAppeared = NO;
 		[[[self rightViewController] view] setHidden:YES];
 		
-		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewControllerWillHideRightView:)]) {
-			[[self delegate] ADSlidingViewControllerWillHideRightView:self];
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerDidHideRightView:)]) {
+			[[self delegate] slidingViewControllerDidHideRightView:self];
 		}
 	}
 }
@@ -835,37 +858,40 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		duration = kADViewAnimationTime;
 	}
 	
-	//Pre-Animation
-	/*if (side == ADAnchorSideLeft) {
+	if (side == ADAnchorSideLeft) {
 		[self rightViewWillAppear];
+		[self leftViewWillDisappear];
 	} else if (side == ADAnchorSideRight) {
+		[self rightViewWillDisappear];
 		[self leftViewWillAppear];
-	}*/
+	} else {
+		[self rightViewWillDisappear];
+		[self leftViewWillDisappear];
+	}
 	
 	_anchoredToSide = side;
 	[[self view] setUserInteractionEnabled:NO];
 	
-	__block BOOL leftAfterHidden;
-	__block BOOL rightAfterHidden;
-	
 	//Animation Block
 	void (^animations)() = ^{
-		[self updateLayout];
-		[[self view] setNeedsDisplay];
-		
-		leftAfterHidden = [[[self leftViewController] view] isHidden];
-		[[[self leftViewController] view] setHidden:NO];
-		
-		rightAfterHidden = [[[self rightViewController] view] isHidden];
-		[[[self rightViewController] view] setHidden:NO];
+		CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:[self anchoredToSide]];
+		[self moveMainViewToHorizontalCenter:newCenter hidingViews:NO];
 	};
 	
 	//Completion Block
 	void (^acompletion)(BOOL finished) = ^(BOOL finished) {
-		[[[self leftViewController] view] setHidden:leftAfterHidden];
-		[[[self rightViewController] view] setHidden:rightAfterHidden];
-		
 		[[self view] setUserInteractionEnabled:YES];
+		
+		if (side == ADAnchorSideLeft) {
+			[self rightViewDidAppear];
+			[self leftViewDidDisappear];
+		} else if (side == ADAnchorSideRight) {
+			[self rightViewDidDisappear];
+			[self leftViewDidAppear];
+		} else {
+			[self rightViewDidDisappear];
+			[self leftViewDidDisappear];
+		}
 		
 		if (completion) {
 			completion();
@@ -878,55 +904,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Do the animation
 	if (animated) {
-		/*CGRect fromRect = [[[self mainViewController] view] frame];
-		CGFloat toCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:side];
-		CGRect toRect = [self calculateMainViewFrameForHorizontalCenter:toCenter];
-		
-		CGRect toBounds = CGRectZero;
-		toBounds.size = toRect.size;
-		CGPoint actualCenter = CGPointMake(CGRectGetMidX(toRect), CGRectGetMidY(toRect));
-		
-		CABasicAnimation *boundsAnimation = [CABasicAnimation animationWithKeyPath:@"bounds"];
-		[boundsAnimation setFromValue:[NSValue valueWithCGRect:fromRect]];
-		[boundsAnimation setToValue:[NSValue valueWithCGRect:toRect]];
-		[boundsAnimation setDuration:duration];
-		*/
-		
-		//[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
-		[UIView transitionWithView:[self view] duration:duration options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
-		
-		/*[UIView beginAnimations:@"" context:nil];
-		[UIView setAnimationDuration:duration];
-		[UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
-		animations();
-		[UIView commitAnimations];
-		acompletion(YES);*/
-		
-		/*
-		[[[[self mainViewController] view] layer] addAnimation:boundsAnimation forKey:@"bounds"];
-		
-		CABasicAnimation *centerAnimation = [CABasicAnimation animationWithKeyPath:@"center"];
-		[centerAnimation setFromValue:[NSValue valueWithCGPoint:[[[self mainViewController] view] center]]];
-		[centerAnimation setToValue:[NSValue valueWithCGPoint:actualCenter]];
-		[centerAnimation setDuration:duration];
-		[[[[self mainViewController] view] layer] addAnimation:centerAnimation forKey:@"center"];
-		
-		[[[self mainViewController] view] setBounds:toBounds];*/
-		//[[[self mainViewController] view] setCenter:actualCenter];
-		
-		//acompletion(YES);
+		[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
 	} else {
 		animations();
 		acompletion(YES);
 	}
-	
-	/*NSLog(@"duration > 0");
-	CABasicAnimation *animation  = [CABasicAnimation animationWithKeyPath:@"bounds"];
-	[animation setFromValue:[NSValue valueWithCGRect:[[[self mainViewController] view] frame]]];
-	[animation setToValue:[NSValue valueWithCGRect:mainViewFrame]];
-	[animation setDuration:duration];
-	
-	[[[[self mainViewController] view] layer] addAnimation:animation forKey:@"bounds"];*/
 }
 
 @end
