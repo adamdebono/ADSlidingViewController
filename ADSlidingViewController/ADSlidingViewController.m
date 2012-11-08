@@ -102,12 +102,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
-	//[_resetTapGesture setCancelsTouchesInView:YES];
+	[_resetTapGesture setCancelsTouchesInView:YES];
 	//[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
-	//[_panGesture setCancelsTouchesInView:YES];
+	[_panGesture setCancelsTouchesInView:YES];
 	//[_panGesture setDelaysTouchesBegan:YES];
 	[_panGesture setDelegate:self];
 	
@@ -221,6 +221,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		[self updateMainViewLayout];
 		
 		[[self view] addSubview:[[self mainViewController] view]];
+		
+		[[[[self mainViewController] view] layer] setShouldRasterize:YES];
+		[[[[self mainViewController] view] layer] setRasterizationScale:[[UIScreen mainScreen] scale]];
 	}
 }
 
@@ -465,14 +468,16 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
 	if (gestureRecognizer == [self resetTapGesture]) {
-		if (otherGestureRecognizer == [self panGesture]) {
-			return NO;
+		if (otherGestureRecognizer != [self panGesture]) {
+			return YES;
 		}
 	} else if (gestureRecognizer == [self panGesture]) {
-		return NO;
+		//if (![otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
+		//	return YES;
+		//}
 	}
 	
-	return YES;
+	return NO;
 }
 
 #pragma mark - Laying out
@@ -679,9 +684,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 #pragma mark - Movement
 
-- (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter {
-	NSLog(@"%f", newCenter);
-	
+- (void)moveMainViewToHorizontalCenter:(CGFloat)newCenter {	
 	currentMainViewCenterX = newCenter;
 	
 	/*CGRect mainViewFrame = [[self view] bounds];
@@ -749,9 +752,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)leftViewWillAppear {
-	NSLog();
-	
 	if (!_leftViewHasAppeared) {
+		NSLog();
+		
 		_leftViewHasAppeared = YES;
 		[[[self leftViewController] view] setHidden:NO];
 		[[self view] sendSubviewToBack:[[self rightViewController] view]];
@@ -763,9 +766,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)leftViewWillHide {
-	NSLog();
-	
 	if (_leftViewHasAppeared) {
+		NSLog();
+		
 		_leftViewHasAppeared = NO;
 		[[[self leftViewController] view] setHidden:YES];
 		
@@ -776,9 +779,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)rightViewWillAppear {
-	NSLog();
-	
 	if (!_rightViewHasAppeared) {
+		NSLog();
+		
 		_rightViewHasAppeared = YES;
 		[[[self rightViewController] view] setHidden:NO];
 		[[self view] sendSubviewToBack:[[self leftViewController] view]];
@@ -790,9 +793,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)rightViewWillHide {
-	NSLog();
-	
 	if (_rightViewHasAppeared) {
+		NSLog();
+		
 		_rightViewHasAppeared = NO;
 		[[[self rightViewController] view] setHidden:YES];
 		
