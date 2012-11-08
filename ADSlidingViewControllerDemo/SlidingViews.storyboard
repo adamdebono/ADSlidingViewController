@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2549" systemVersion="12B19" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Qfs-A1-s9v">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="2840" systemVersion="12C54" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="Qfs-A1-s9v">
     <dependencies>
-        <deployment version="1280" defaultVersion="1296" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1498"/>
+        <deployment version="1280" defaultVersion="1536" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="1926"/>
     </dependencies>
     <scenes>
         <!--Main View Controller-->
@@ -38,28 +38,28 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="300" maximumValue="1024" stepValue="10" id="S7a-w1-2yD">
+                            <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="200" maximumValue="1024" stepValue="10" id="S7a-w1-2yD">
                                 <rect key="frame" x="206" y="64" width="94" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="rightAnchorValueChanged:" destination="Qfs-A1-s9v" eventType="valueChanged" id="QPU-Ym-rpZ"/>
                                 </connections>
                             </stepper>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="300" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nVb-vk-XgJ">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="200" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="nVb-vk-XgJ">
                                 <rect key="frame" x="160" y="67" width="38" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="300" maximumValue="1024" stepValue="10" id="RZc-pc-Zy0">
+                            <stepper opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="200" maximumValue="1024" stepValue="10" id="RZc-pc-Zy0">
                                 <rect key="frame" x="20" y="64" width="94" height="27"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="leftAnchorValueChanged:" destination="Qfs-A1-s9v" eventType="valueChanged" id="cks-ah-hWk"/>
                                 </connections>
                             </stepper>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="300" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uQ7-SX-tfH">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="200" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="uQ7-SX-tfH">
                                 <rect key="frame" x="122" y="67" width="36" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -88,7 +88,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="jm8-ef-TlL">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" id="jm8-ef-TlL">
                                 <rect key="frame" x="20" y="114" width="138" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <segments>
@@ -96,7 +96,7 @@
                                     <segment title="Reveal"/>
                                 </segments>
                             </segmentedControl>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="bFe-E1-ima">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" id="bFe-E1-ima">
                                 <rect key="frame" x="160" y="114" width="140" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <segments>
@@ -112,7 +112,7 @@
                                     <segment title="Resize"/>
                                 </segments>
                             </segmentedControl>
-                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" id="bUB-KC-sIz">
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="bUB-KC-sIz">
                                 <rect key="frame" x="160" y="184" width="140" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <segments>
@@ -234,29 +234,6 @@
             <point key="canvasLocation" x="731" y="223"/>
         </scene>
     </scenes>
-    <classes>
-        <class className="MainViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/MainViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="leftAnchorValueChanged:" candidateClass="UIStepper"/>
-                <relationship kind="action" name="leftBarButton:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="rightAnchorValueChanged:" candidateClass="UIStepper"/>
-                <relationship kind="action" name="rightBarButton:" candidateClass="UIBarButtonItem"/>
-                <relationship kind="action" name="updatePressed:" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="leftAnchorAmountLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="leftAnchorAmountStepper" candidateClass="UIStepper"/>
-                <relationship kind="outlet" name="leftAnchorLayoutType" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="leftAnchorWidthType" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="leftSecondaryLayoutType" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="rightAnchorAmountLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="rightAnchorAmountStepper" candidateClass="UIStepper"/>
-                <relationship kind="outlet" name="rightAnchorLayoutType" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="rightAnchorWidthType" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="rightSecondaryLayoutType" candidateClass="UISegmentedControl"/>
-                <relationship kind="outlet" name="undersidePersistencyControl" candidateClass="UISegmentedControl"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

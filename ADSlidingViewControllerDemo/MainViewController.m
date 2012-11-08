@@ -18,6 +18,10 @@
 @synthesize leftSecondaryLayoutType;
 @synthesize rightSecondaryLayoutType;
 
+- (void)viewDidAppear:(BOOL)animated {
+	[self updatePressed:nil];
+}
+
 - (IBAction)leftBarButton:(UIBarButtonItem *)sender {
 	[[self slidingViewController] anchorTopViewTo:ADAnchorSideRight];
 }

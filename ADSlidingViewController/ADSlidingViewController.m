@@ -289,7 +289,16 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)setShowTopViewShadow:(BOOL)showTopViewShadow {
 	NSLog(@"%d", showTopViewShadow);
 	_showTopViewShadow = showTopViewShadow;
-	[self updateMainViewShadow];
+	
+	if (_showTopViewShadow) {
+		//[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
+		//[[[[self mainViewController] view] layer] setShadowRadius:10];
+		//[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
+		//[[[[self mainViewController] view] layer] setShadowOpacity:1];
+	} else {
+		//[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
+	}
+	
 }
 
 #pragma mark - View Information
@@ -362,8 +371,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			CGFloat maxDelta = abs(viewCenter - maxCenter);
 			CGFloat extra = delta - maxDelta;
 			if (extra > 0) {
-				extra = tanh(extra / 100) * 100;
-				//extra /= 2;
+				//extra = tanh(extra / 100) * 100;
+				extra /= 2;
 				newCenter = viewCenter + (maxDelta + extra) * multiple;
 			} else {
 				//newCenter = newCenter
@@ -628,18 +637,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	return mainViewFrame;
 }
 
-- (void)updateMainViewShadow {
-	//Shadow
-	[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
-	[[[[self mainViewController] view] layer] setShadowRadius:10];
-	[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
-	if ([self showTopViewShadow]) {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.75f];
-	} else {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
-	}
-}
-
 - (BOOL)checkUndersidePersistency {
 	if ([self undersidePersistencyType] == ADUndersidePersistencyTypeNone) {
 		return NO;
@@ -717,7 +714,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	} else {
 		[self leftViewWillHide];
 	}
-	/*** LETS SEE IF WERE IN AN ANIMATION BLOCK ***/
 	
 	if (mainViewFrame.origin.x + mainViewFrame.size.width < [[self view] bounds].size.width) {
 		[self rightViewWillAppear];
@@ -728,7 +724,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[[[self mainViewController] view] setFrame:mainViewFrame];
 	//[[[self mainViewController] view] setBounds:mainViewBounds];
 	//[[[self mainViewController] view] setCenter:theCenter];
-	//[[[[self mainViewController] view] layer] setShadowPath:CGPathCreateWithRect(mainViewFrame, NULL)];
 	
 	//[[[[self mainViewController] view] layer] setFrame:mainViewFrame];
 	//[[[[self mainViewController] view] layer] setBounds:mainViewBounds];
@@ -853,6 +848,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//Animation Block
 	void (^animations)() = ^{
 		[self updateLayout];
+		[[self view] setNeedsDisplay];
 		
 		leftAfterHidden = [[[self leftViewController] view] isHidden];
 		[[[self leftViewController] view] setHidden:NO];
