@@ -37,11 +37,11 @@
 @end
 
 /* Default Values */
-static const CGFloat kADDefaultAnchorAmount = 300.0f;
+static const CGFloat kADDefaultAnchorAmount = 280.0f;
 
 static const BOOL kADDefaultMainViewAllowsInteraction = NO;
 
-static const ADAnchorWidthType kADDefaultAnchorWidthType = ADAnchorWidthTypePeek;
+static const ADAnchorWidthType kADDefaultAnchorWidthType = ADAnchorWidthTypeReveal;
 static const ADMainAnchorType kADDefaultMainAnchorType = ADMainAnchorTypeSlide;
 static const ADUndersidePersistencyType kADDefaultUndersidePersistencyType = ADUndersidePersistencyTypeNone;
 static const ADUnderAnchorType kADDefaultUnderAnchorType = ADUnderAnchorTypeUnderneath;
@@ -55,7 +55,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 #pragma mark - Main Implementation
 @implementation ADSlidingViewController
 
-#pragma mark - View Lifecycle
+#pragma mark - Initialisation
 
 - (id)init {
 	if (self = [super init]) {
@@ -72,6 +72,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)load {
 	NSLog();
 	
+	[self setRestorationIdentifier:@"ADSlidingViewControllerRestorationIdentifier"];
+	
 	/* Setup Default Values */
 	_leftViewAnchorWidth = kADDefaultAnchorAmount;
 	_rightViewAnchorWidth = kADDefaultAnchorAmount;
@@ -85,13 +87,87 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_leftUnderAnchorType = kADDefaultUnderAnchorType;
 	_rightUnderAnchorType = kADDefaultUnderAnchorType;
 	
-	_undersidePersistencyType = kADDefaultUndersidePersistencyType;	
+	_undersidePersistencyType = kADDefaultUndersidePersistencyType;
 	
 	_anchoredToSide = ADAnchorSideCenter;
+	
+	_showTopViewShadow = NO;
 	
 	_leftViewHasAppeared = NO;
 	_rightViewHasAppeared = NO;
 }
+
+#pragma mark - State Restoration
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
+	[super encodeRestorableStateWithCoder:coder];
+	
+	if ([self mainViewController]) {
+		[coder encodeObject:[self mainViewController] forKey:@"mainViewController"];
+	}
+	if ([self leftViewController]) {
+		[coder encodeObject:[self leftViewController] forKey:@"leftViewController"];
+	}
+	if ([self rightViewController]) {
+		[coder encodeObject:[self rightViewController] forKey:@"rightViewController"];
+	}
+	
+	[coder encodeFloat:[self leftViewAnchorWidth] forKey:@"leftViewAnchorWidth"];
+	[coder encodeFloat:[self rightViewAnchorWidth] forKey:@"rightViewAnchorWidth"];
+	
+	[coder encodeInteger:[self leftViewAnchorWidthType] forKey:@"leftViewAnchorWidthType"];
+	[coder encodeInteger:[self rightViewAnchorWidthType] forKey:@"rightViewAnchorWidthType"];
+	
+	[coder encodeInteger:[self leftMainAnchorType] forKey:@"leftMainAnchorType"];
+	[coder encodeInteger:[self rightMainAnchorType] forKey:@"rightMainAnchorType"];
+	
+	[coder encodeInteger:[self leftUnderAnchorType] forKey:@"leftUnderAnchorType"];
+	[coder encodeInteger:[self rightUnderAnchorType] forKey:@"rightUnderAnchorType"];
+	
+	[coder encodeInteger:[self undersidePersistencyType] forKey:@"undersidePersistencyType"];
+	
+	[coder encodeInteger:[self anchoredToSide] forKey:@"anchoredToSide"];
+	
+	[coder encodeBool:[self showTopViewShadow] forKey:@"showTopViewShadow"];
+	
+	[coder encodeBool:[self leftViewHasAppeared] forKey:@"leftViewHasAppeared"];
+	[coder encodeBool:[self rightViewHasAppeared] forKey:@"rightViewHasAppeared"];
+	
+	//[coder encodeObject:[self resetTapGesture] forKey:@"resetTapGesture"];
+	//[coder encodeObject:[self panGesture] forKey:@"panGesture"];
+}
+
+- (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
+	[super decodeRestorableStateWithCoder:coder];
+	
+	//Does not matter if these are nil
+	[self setMainViewController:[coder decodeObjectForKey:@"mainViewController"]];
+	[self setLeftViewController:[coder decodeObjectForKey:@"leftViewController"]];
+	[self setRightViewController:[coder decodeObjectForKey:@"rightViewController"]];
+	
+	_leftViewAnchorWidth = [coder decodeIntegerForKey:@"leftViewAnchorWidth"];
+	_rightViewAnchorWidth = [coder decodeIntegerForKey:@"rightViewAnchorWidth"];
+	
+	_leftViewAnchorWidthType = [coder decodeIntegerForKey:@"leftViewAnchorWidthType"];
+	_rightViewAnchorWidthType = [coder decodeIntegerForKey:@"rightViewAnchorWidthType"];
+	
+	_leftMainAnchorType = [coder decodeIntegerForKey:@"leftMainAnchorType"];
+	_rightMainAnchorType = [coder decodeIntegerForKey:@"rightMainAnchortype"];
+	
+	_leftUnderAnchorType = [coder decodeIntegerForKey:@"leftUnderAnchorType"];
+	_rightUnderAnchorType = [coder decodeIntegerForKey:@"rightUnderAnchorType"];
+	
+	_undersidePersistencyType = [coder decodeIntegerForKey:@"undersidePersistencyType"];
+	
+	_anchoredToSide = [coder decodeIntegerForKey:@"anchoredToSide"];
+	
+	_showTopViewShadow = [coder decodeBoolForKey:@"showTopViewShadow"];
+	
+	_leftViewHasAppeared = [coder decodeBoolForKey:@"leftViewHasAppeared"];
+	_rightViewHasAppeared = [coder decodeBoolForKey:@"rightViewHasAppeared"];
+}
+
+#pragma mark - View Lifecycle
 
 - (void)viewDidLoad {
 	NSLog();
@@ -196,6 +272,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 #ifdef __IPHONE_6_0
 - (NSUInteger)supportedInterfaceOrientations {
 	return UIInterfaceOrientationMaskAll;
+}
+
+- (BOOL)shouldAutorotate {
+	return YES;
 }
 #endif
 
