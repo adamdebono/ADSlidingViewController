@@ -137,9 +137,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	[coder encodeBool:[self leftViewHasAppeared] forKey:@"leftViewHasAppeared"];
 	[coder encodeBool:[self rightViewHasAppeared] forKey:@"rightViewHasAppeared"];
-	
-	//[coder encodeObject:[self resetTapGesture] forKey:@"resetTapGesture"];
-	//[coder encodeObject:[self panGesture] forKey:@"panGesture"];
 }
 
 - (void)decodeRestorableStateWithCoder:(NSCoder *)coder {
@@ -189,12 +186,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
 	[_resetTapGesture setCancelsTouchesInView:YES];
-	//[_resetTapGesture setDelaysTouchesBegan:YES];
 	[_resetTapGesture setDelegate:self];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
 	[_panGesture setCancelsTouchesInView:YES];
-	//[_panGesture setDelaysTouchesBegan:YES];
 	[_panGesture setDelegate:self];
 	
 	/* Key-Value Observation */
@@ -219,12 +214,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[super viewWillAppear:animated];
 	
 	[self updateLayout];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-	NSLog();
-	
-	[super viewDidAppear:animated];
 }
 
 - (void)dealloc {
@@ -271,6 +260,18 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			[self updateLayout];
 		}
 	}
+}
+
+- (BOOL)automaticallyForwardAppearanceAndRotationMethodsToChildViewControllers {
+	return YES;
+}
+
+- (BOOL)shouldAutomaticallyForwardAppearanceMethods {
+	return YES;
+}
+
+- (BOOL)shouldAutomaticallyForwardRotationMethods {
+	return YES;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation {
@@ -564,9 +565,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			return YES;
 		}
 	} else if (gestureRecognizer == [self panGesture]) {
-		//if (![otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]]) {
-		//	return YES;
-		//}
+		
 	}
 	
 	return NO;
@@ -644,7 +643,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//Calculations
 	CGFloat horizontalCenter = CGRectGetMidX([[self view] bounds]);
 	CGFloat viewWidth = [[self view] bounds].size.width;
-	CGFloat newCenter = 0;//[[[self mainViewController] view] center].x;
+	CGFloat newCenter = 0;
 	
 	if ([self checkUndersidePersistency]) {
 		if (side == ADAnchorSideLeft) {
