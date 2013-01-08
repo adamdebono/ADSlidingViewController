@@ -26,7 +26,7 @@
 @end
 
 #pragma mark - Private Interface
-@interface ADSlidingViewController () {
+@interface ADSlidingViewController () <UIViewControllerRestoration> {
 	CGFloat initialViewCenterX;
 	CGFloat currentMainViewCenterX;
 }
@@ -75,7 +75,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)load {
 	NSLog();
 	
+	//state restoration
 	[self setRestorationIdentifier:kADStateRestorationIdentifier];
+	[self setRestorationClass:[self class]];
 	
 	/* Setup Default Values */
 	_leftViewAnchorWidth = kADDefaultAnchorAmount;
@@ -168,6 +170,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	_leftViewHasAppeared = [coder decodeBoolForKey:@"leftViewHasAppeared"];
 	_rightViewHasAppeared = [coder decodeBoolForKey:@"rightViewHasAppeared"];
+}
+
++ (UIViewController *)viewControllerWithRestorationIdentifierPath:(NSArray *)identifierComponents coder:(NSCoder *)coder {
+	ADSlidingViewController *controller = [[self alloc] init];
+	return controller;
 }
 
 #pragma mark - View Lifecycle
@@ -471,8 +478,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		
 		ADAnchorSide side;
 		
-		NSTimeInterval duration;
-		if (velocity > 100) {//moving -> this way
+		if ([sender state] == UIGestureRecognizerStateCancelled) {
+			side = _anchoredToSide;
+		} else if (velocity > 100) {//moving -> this way
 			if ([self anchoredToSide] == ADAnchorSideLeft) {
 				side = ADAnchorSideCenter;
 			} else if ([self leftViewController]) {
@@ -508,6 +516,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 				}
 			}
 		}
+		
+		NSTimeInterval duration;
 		side = [self whatSideForUndersidePersistencyOnSide:side];
 		if ([self anchoredToSide] == side) {
 			duration = kADViewAnimationTime;
