@@ -225,8 +225,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	NSLog();
 	
 	[super viewDidAppear:animated];
-	
-	[self updateLayout];
 }
 
 - (void)dealloc {
@@ -314,6 +312,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		
 		[[[[self mainViewController] view] layer] setShouldRasterize:YES];
 		[[[[self mainViewController] view] layer] setRasterizationScale:[[UIScreen mainScreen] scale]];
+		
+		[[[[self mainViewController] view] layer] setMasksToBounds:NO];
+		[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
+		[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
+		[[[[self mainViewController] view] layer] setShadowRadius:5];
 	}
 }
 
@@ -384,14 +387,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_showTopViewShadow = showTopViewShadow;
 	
 	if (_showTopViewShadow) {
-		//[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
-		//[[[[self mainViewController] view] layer] setShadowRadius:10];
-		//[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
-		//[[[[self mainViewController] view] layer] setShadowOpacity:1];
+		[[[[self mainViewController] view] layer] setShadowOpacity:1.0f];
 	} else {
-		//[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
+		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
 	}
-	
 }
 
 #pragma mark - View Information
