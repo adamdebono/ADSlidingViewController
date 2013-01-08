@@ -47,7 +47,10 @@ static const ADUndersidePersistencyType kADDefaultUndersidePersistencyType = ADU
 static const ADUnderAnchorType kADDefaultUnderAnchorType = ADUnderAnchorTypeUnderneath;
 
 /* Constants */
+static NSString *const kADStateRestorationIdentifier = @"ADSlidingViewControllerRestorationIdentifier";
+
 static const CGFloat kADViewAnimationTime = 0.3f;
+
 static const UIViewAutoresizing kFullScreenAutoResizing = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
 static const UIViewAutoresizing kLeftSideAutoResizing = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
 static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -72,7 +75,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)load {
 	NSLog();
 	
-	[self setRestorationIdentifier:@"ADSlidingViewControllerRestorationIdentifier"];
+	[self setRestorationIdentifier:kADStateRestorationIdentifier];
 	
 	/* Setup Default Values */
 	_leftViewAnchorWidth = kADDefaultAnchorAmount;

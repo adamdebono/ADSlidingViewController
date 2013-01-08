@@ -2,6 +2,8 @@
 
 Based on ECSlidingViewController
 
+### Under Development ###
+
 Please place any feature requests or bugs in the issues section of this repo.
 
 ## Requirements ##
@@ -18,10 +20,3 @@ Please place any feature requests or bugs in the issues section of this repo.
 - Resize or Slide Top view
 - Under view controllers can slide with top view or be static underneath
 - Can force one side to always be shown in Landscape or both orientations
-
-## TODO ##
-
-## BUGS ##
-
-- Anchor animation when on resize
-- Tap gesture gets buttons on iOS 6
