@@ -278,7 +278,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	return YES;
 }
 
-#ifdef __IPHONE_6_0
 - (NSUInteger)supportedInterfaceOrientations {
 	return UIInterfaceOrientationMaskAll;
 }
@@ -286,7 +285,6 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (BOOL)shouldAutorotate {
 	return YES;
 }
-#endif
 
 #pragma mark - View Controller Setters
 
@@ -531,7 +529,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		}
 		
 		NSLog(@"Finished Pan Gesture: velocity = %f, duration %f", velocity, duration);
-		[self anchorTopViewTo:side animated:YES duration:duration completion:NULL];
+		[self anchorTopViewTo:side duration:duration animated:YES animations:NULL completion:NULL];
 	}
 }
 
@@ -926,14 +924,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated {
-	[self anchorTopViewTo:side animated:animated completion:NULL];
+	[self anchorTopViewTo:side animated:animated animations:NULL completion:NULL];
 }
 
-- (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated completion:(void (^)())completion {
-	[self anchorTopViewTo:side animated:animated duration:kADViewAnimationTime completion:completion];
+- (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated animations:(void (^)())animations completion:(void (^)())completion {
+	[self anchorTopViewTo:side duration:kADViewAnimationTime animated:animated animations:animations completion:completion];
 }
 
-- (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated duration:(NSTimeInterval)duration completion:(void (^)())completion {
+- (void)anchorTopViewTo:(ADAnchorSide)side duration:(NSTimeInterval)duration animated:(BOOL)animated animations:(void (^)())animations completion:(void (^)())completion {
 	NSLog();
 	ADAnchorSide s = side;
 	
@@ -947,6 +945,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	if (side != s) {
 		duration = kADViewAnimationTime;
+	}
+	
+	if (!animated) {
+		duration = 0;
+	}
+	
+	if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewController:willAnchorToSide:duration:)]) {
+		[[self delegate] ADSlidingViewController:self willAnchorToSide:side duration:duration];
 	}
 	
 	if (side == ADAnchorSideLeft) {
@@ -964,9 +970,15 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[[self view] setUserInteractionEnabled:NO];
 	
 	//Animation Block
-	void (^animations)() = ^{
+	void (^allAnimations)() = ^{
 		CGFloat newCenter = [self calculateMainViewHorizontalCenterWhenAnchoredToSide:[self anchoredToSide]];
 		[self moveMainViewToHorizontalCenter:newCenter hidingViews:NO];
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(ADSlidingViewController:willAnimateAnchorToSide:duration:)]) {
+			[[self delegate] ADSlidingViewController:self willAnimateAnchorToSide:side duration:duration];
+		}
+		if (animations) {
+			animations();
+		}
 	};
 	
 	//Completion Block
@@ -995,9 +1007,9 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Do the animation
 	if (animated) {
-		[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:animations completion:acompletion];
+		[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseOut animations:allAnimations completion:acompletion];
 	} else {
-		animations();
+		allAnimations();
 		acompletion(YES);
 	}
 }

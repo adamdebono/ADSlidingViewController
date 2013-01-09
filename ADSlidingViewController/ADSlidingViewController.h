@@ -46,7 +46,32 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 @protocol ADSlidingViewControllerDelegate <NSObject>
 @optional
 
-//Anchoring
+/*
+ Sent to the delegate just before the mainViewController begins sliding.
+ 
+ NOTE: this is called AFTER the pan gesture is complete.
+ 
+ @param ADSlidingViewController	slidingViewController	The controller that sent the message.
+ @param ADAnchorSide			side					The side about to anchor to.
+ @param NSTimeInterval			duration				The duration of the pending animation, in seconds.
+ */
+- (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController willAnchorToSide:(ADAnchorSide)side duration:(NSTimeInterval)duration;
+/*
+ Sent to the delegate just before performing the slide animation.
+ 
+ This is called from within the animation block used to slide the view. By the time this method has been called, the view manipulation has been calculated and set.
+ 
+ @param ADSlidingViewController	slidingViewController	The controller that sent the message.
+ @param ADAnchorSide			side					The side about to anchor to.
+ @param NSTimeInterval			duration				The duration of the pending animation, in seconds.
+ */
+- (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController willAnimateAnchorToSide:(ADAnchorSide)side duration:(NSTimeInterval)duration;
+/*
+ Sent to the delegate after the mainViewController has finished sliding.
+ 
+ @param ADSlidingViewController	slidingViewController	The controller that sent the message.
+ @param ADAnchorSide			side					The side just anchored to.
+ */
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController didAnchorToSide:(ADAnchorSide)side;
 
 
@@ -155,11 +180,12 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
  
  @param ADAnchorSide side		The side you wish to anchor to
  @param BOOL animated			Whether or not to animate the movement.
+ @param void(^)() animations	A block which is run inside the animation block. Any view manipulation that can cause implicit animations will be animated.
  @param void(^)() completion	A block to run on completion. Can be NULL.
  */
 - (void)anchorTopViewTo:(ADAnchorSide)side;
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated;
-- (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated completion:(void(^)())completion;
+- (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated animations:(void (^)())animations completion:(void(^)())completion;
 
 @end
 
