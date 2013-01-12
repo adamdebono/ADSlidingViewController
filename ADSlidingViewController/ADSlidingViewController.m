@@ -6,6 +6,23 @@
 //  Copyright (c) 2012 Adam Debono. All rights reserved.
 //
 
+//Only NSLog() in DEBUG mode
+#if DEBUG
+#   define NSLog(fmt, ...) if([ADSlidingViewController isLoggingEnabled]){NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);}
+#else
+#   define NSLog(...)
+#endif
+
+//ALog() always
+#define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
+
+//ULog() shows an alert view
+#if DEBUG
+#   define ULog(fmt, ...)  if([ADSlidingViewController isLoggingEnabled]){ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%s\n [Line %d] ", __PRETTY_FUNCTION__, __LINE__] message:[NSString stringWithFormat:fmt, ##__VA_ARGS__]  delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]; [alert show]; }
+#else
+#   define ULog(...)
+#endif
+
 #import <QuartzCore/QuartzCore.h>
 
 #import "ADSlidingViewController.h"
@@ -35,6 +52,8 @@
 @property (nonatomic) BOOL rightViewHasAppeared;
 
 @end
+
+static BOOL loggingEnabled = YES;
 
 /* Default Values */
 static const CGFloat kADDefaultAnchorAmount = 280.0f;
@@ -1012,6 +1031,16 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		allAnimations();
 		acompletion(YES);
 	}
+}
+
+#pragma mark - Logging
+
++ (void)setLoggingEnabled:(BOOL)enabled {
+	loggingEnabled = enabled;
+}
+
++ (BOOL)isLoggingEnabled {
+	return loggingEnabled;
 }
 
 @end

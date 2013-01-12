@@ -168,7 +168,6 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 @property (nonatomic, readonly) UITapGestureRecognizer *resetTapGesture;
 @property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
 
-
 /*
  Returns YES if the view is visible
  */
@@ -186,6 +185,9 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 - (void)anchorTopViewTo:(ADAnchorSide)side;
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated;
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated animations:(void (^)())animations completion:(void(^)())completion;
+
++ (void)setLoggingEnabled:(BOOL)enabled;
++ (BOOL)isLoggingEnabled;
 
 @end
 
