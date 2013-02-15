@@ -16,13 +16,6 @@
 //ALog() always
 #define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
 
-//ULog() shows an alert view
-#if DEBUG
-#   define ULog(fmt, ...)  if([ADSlidingViewController isLoggingEnabled]){ UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"%s\n [Line %d] ", __PRETTY_FUNCTION__, __LINE__] message:[NSString stringWithFormat:fmt, ##__VA_ARGS__]  delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil]; [alert show]; }
-#else
-#   define ULog(...)
-#endif
-
 #import <QuartzCore/QuartzCore.h>
 
 #import "ADSlidingViewController.h"
@@ -817,6 +810,13 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			[self rightViewWillDisappear];
 			[self rightViewDidDisappear];
 		}
+	}
+	
+	if (!CGSizeEqualToSize([[[self mainViewController] view] frame].size, mainViewFrame.size)) {
+		CGRect shadowFrame = mainViewFrame;
+		shadowFrame.origin = CGPointZero;
+		CGPathRef shadowPath = CGPathCreateWithRect(shadowFrame, NULL);
+		[[[[self mainViewController] view] layer] setShadowPath:shadowPath];
 	}
 	
 	[[[self mainViewController] view] setFrame:mainViewFrame];
