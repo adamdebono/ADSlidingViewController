@@ -74,6 +74,7 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
  */
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController didAnchorToSide:(ADAnchorSide)side;
 
+- (void)slidingViewControllerPanGestureDidActivate:(ADSlidingViewController *)slidingViewController;
 
 - (void)slidingViewControllerWillShowLeftView:(ADSlidingViewController *)slidingViewController;
 - (void)slidingViewControllerDidShowLeftView:(ADSlidingViewController *)slidingViewController;

@@ -441,6 +441,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if ([sender state] == UIGestureRecognizerStateBegan) {
 		NSLog(@"Began Pan Gesture");
 		initialViewCenterX = currentMainViewCenterX;
+		
+		if ([self delegate] && [[self delegate] respondsToSelector:@selector(slidingViewControllerPanGestureDidActivate:)]) {
+			[[self delegate] slidingViewControllerPanGestureDidActivate:self];
+		}
 	} else if ([sender state] == UIGestureRecognizerStateChanged) {
 		//Calculate movement
 		CGFloat panAmount = [sender translationInView:[sender view]].x;
