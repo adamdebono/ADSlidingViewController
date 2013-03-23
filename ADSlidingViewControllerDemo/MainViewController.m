@@ -19,6 +19,8 @@
 @synthesize rightSecondaryLayoutType;
 
 - (void)viewDidAppear:(BOOL)animated {
+	[super viewDidAppear:animated];
+	
 	[self updatePressed:nil];
 }
 

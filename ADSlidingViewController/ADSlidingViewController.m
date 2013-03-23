@@ -44,6 +44,8 @@
 @property (nonatomic) BOOL leftViewHasAppeared;
 @property (nonatomic) BOOL rightViewHasAppeared;
 
+@property (nonatomic) UIView *mainView;
+
 @end
 
 static BOOL loggingEnabled = YES;
@@ -90,7 +92,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	//state restoration
 	[self setRestorationIdentifier:kADStateRestorationIdentifier];
 	[self setRestorationClass:[self class]];
-	
+		
 	/* Setup Default Values */
 	_leftViewAnchorWidth = kADDefaultAnchorAmount;
 	_rightViewAnchorWidth = kADDefaultAnchorAmount;
@@ -118,7 +120,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder {
 	[super encodeRestorableStateWithCoder:coder];
-	
+		
 	if ([self mainViewController]) {
 		[coder encodeObject:[self mainViewController] forKey:@"mainViewController"];
 	}
@@ -158,7 +160,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[self setMainViewController:[coder decodeObjectForKey:@"mainViewController"]];
 	[self setLeftViewController:[coder decodeObjectForKey:@"leftViewController"]];
 	[self setRightViewController:[coder decodeObjectForKey:@"rightViewController"]];
-	
+		
 	_leftViewAnchorWidth = [coder decodeIntegerForKey:@"leftViewAnchorWidth"];
 	_rightViewAnchorWidth = [coder decodeIntegerForKey:@"rightViewAnchorWidth"];
 	
@@ -194,6 +196,18 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[super viewDidLoad];
 	
 	[[self view] setAutoresizingMask:kFullScreenAutoResizing];
+	
+	_mainView = [[UIView alloc] initWithFrame:[[self view] bounds]];
+	[[self mainView] setAutoresizingMask:kFullScreenAutoResizing];
+	[[self view] addSubview:[self mainView]];
+	
+	[[[self mainView] layer] setShouldRasterize:YES];
+	[[[self mainView] layer] setRasterizationScale:[[UIScreen mainScreen] scale]];
+	
+	[[[self mainView] layer] setMasksToBounds:NO];
+	[[[self mainView] layer] setShadowColor:[[UIColor blackColor] CGColor]];
+	[[[self mainView] layer] setShadowOffset:CGSizeZero];
+	[[[self mainView] layer] setShadowRadius:5];
 	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
@@ -327,15 +341,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		
 		[self updateMainViewLayout];
 		
-		[[self view] addSubview:[[self mainViewController] view]];
+		CGRect frame = CGRectZero;
+		frame.size = [[self mainView] frame].size;
+		[[[self mainViewController] view] setFrame:frame];
 		
-		[[[[self mainViewController] view] layer] setShouldRasterize:YES];
-		[[[[self mainViewController] view] layer] setRasterizationScale:[[UIScreen mainScreen] scale]];
-		
-		[[[[self mainViewController] view] layer] setMasksToBounds:NO];
-		[[[[self mainViewController] view] layer] setShadowColor:[[UIColor blackColor] CGColor]];
-		[[[[self mainViewController] view] layer] setShadowOffset:CGSizeZero];
-		[[[[self mainViewController] view] layer] setShadowRadius:5];
+		[[self mainView] addSubview:[[self mainViewController] view]];
 	}
 }
 
@@ -406,16 +416,16 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_showTopViewShadow = showTopViewShadow;
 	
 	if (_showTopViewShadow) {
-		[[[[self mainViewController] view] layer] setShadowOpacity:1.0f];
+		[[[self mainView] layer] setShadowOpacity:1.0f];
 	} else {
-		[[[[self mainViewController] view] layer] setShadowOpacity:0.0f];
+		[[[self mainView] layer] setShadowOpacity:0.0f];
 	}
 }
 
 #pragma mark - View Information
 
 - (BOOL)leftViewShowing {
-	CGFloat mainMid = CGRectGetMidX([[[self mainViewController] view] frame]);
+	CGFloat mainMid = CGRectGetMidX([[self mainView] frame]);
 	CGFloat selfMid = CGRectGetMidX([[self view] bounds]);
 	BOOL leftViewShowing = mainMid > selfMid;
 	NSLog(@"%d", leftViewShowing);
@@ -423,7 +433,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (BOOL)rightViewShowing {
-	CGFloat mainMid = CGRectGetMidX([[[self mainViewController] view] frame]);
+	CGFloat mainMid = CGRectGetMidX([[self mainView] frame]);
 	CGFloat selfMid = CGRectGetMidX([[self view] bounds]);
 	BOOL rightViewShowing = mainMid < selfMid;
 	NSLog(@"%d", rightViewShowing);
@@ -824,14 +834,14 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		}
 	}
 	
-	if (!CGSizeEqualToSize([[[self mainViewController] view] frame].size, mainViewFrame.size)) {
+	if (!CGSizeEqualToSize([[self mainView] frame].size, mainViewFrame.size)) {
 		CGRect shadowFrame = mainViewFrame;
 		shadowFrame.origin = CGPointZero;
 		CGPathRef shadowPath = CGPathCreateWithRect(shadowFrame, NULL);
-		[[[[self mainViewController] view] layer] setShadowPath:shadowPath];
+		[[[self mainView] layer] setShadowPath:shadowPath];
 	}
 	
-	[[[self mainViewController] view] setFrame:mainViewFrame];
+	[[self mainView] setFrame:mainViewFrame];
 	
 	if ([self leftUnderAnchorType] == ADUnderAnchorTypeSlide) {
 		CGRect leftFrame = [[[self leftViewController] view] frame];
