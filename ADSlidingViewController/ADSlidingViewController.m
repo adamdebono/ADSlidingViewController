@@ -201,6 +201,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	[[self mainView] setAutoresizingMask:kFullScreenAutoResizing];
 	[[self view] addSubview:[self mainView]];
 	
+	[[self mainView] setBackgroundColor:[UIColor clearColor]];
+	
 	[[[self mainView] layer] setShouldRasterize:YES];
 	[[[self mainView] layer] setRasterizationScale:[[UIScreen mainScreen] scale]];
 	
@@ -274,26 +276,20 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
 		if ([self undersidePersistencyType] >= ADUndersidePersistencyTypeLandscape) {
 			if ([self anchoredToSide] == ADAnchorSideCenter) {
-				[self anchorTopViewTo:[self whatSideForUndersidePersistencyOnSide:ADAnchorSideCenter] animated:NO];
-			} else {
-				[self updateLayout];
+				_anchoredToSide = [self whatSideForUndersidePersistencyOnSide:ADAnchorSideCenter];
 			}
-		} else {
-			[self updateLayout];
 		}
 	} else {
 		if ([self undersidePersistencyType] == ADUndersidePersistencyTypeAlways) {
 			if ([self anchoredToSide] == ADAnchorSideCenter) {
-				[self anchorTopViewTo:[self whatSideForUndersidePersistencyOnSide:ADAnchorSideCenter] animated:NO];
-			} else {
-				[self updateLayout];
+				_anchoredToSide = [self whatSideForUndersidePersistencyOnSide:ADAnchorSideCenter];
 			}
 		} else if ([self undersidePersistencyType] == ADUndersidePersistencyTypeLandscape && [self anchoredToSide] != ADAnchorSideCenter) {
-			[self anchorTopViewTo:ADAnchorSideCenter animated:NO];
-		} else {
-			[self updateLayout];
+			_anchoredToSide = ADAnchorSideCenter;
 		}
 	}
+	
+	[self updateLayout];
 }
 
 - (BOOL)automaticallyForwardAppearanceAndRotationMethodsToChildViewControllers {
