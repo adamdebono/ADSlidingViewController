@@ -46,6 +46,9 @@
 
 @property (nonatomic) UIView *mainView;
 
+@property (nonatomic, readonly) UITapGestureRecognizer *resetTapGesture;
+@property (nonatomic, readonly) UIPanGestureRecognizer *resetPanGesture;
+
 @end
 
 static BOOL loggingEnabled = YES;
@@ -59,6 +62,8 @@ static const ADAnchorWidthType kADDefaultAnchorWidthType = ADAnchorWidthTypeReve
 static const ADMainAnchorType kADDefaultMainAnchorType = ADMainAnchorTypeSlide;
 static const ADUndersidePersistencyType kADDefaultUndersidePersistencyType = ADUndersidePersistencyTypeNone;
 static const ADUnderAnchorType kADDefaultUnderAnchorType = ADUnderAnchorTypeUnderneath;
+
+static const ADResetGesture kADDefaultResetGestures = ADResetGesturePan | ADResetGestureTap;
 
 /* Constants */
 static NSString *const kADStateRestorationIdentifier = @"ADSlidingViewControllerRestorationIdentifier";
@@ -107,6 +112,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	_rightUnderAnchorType = kADDefaultUnderAnchorType;
 	
 	_undersidePersistencyType = kADDefaultUndersidePersistencyType;
+	
+	_resetGestures = kADDefaultResetGestures;
 	
 	_anchoredToSide = ADAnchorSideCenter;
 	
@@ -213,8 +220,17 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	//Gestures
 	_resetTapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGestureActivated:)];
-	[_resetTapGesture setCancelsTouchesInView:YES];
-	[_resetTapGesture setDelegate:self];
+	[[self resetTapGesture] setCancelsTouchesInView:YES];
+	[[self resetTapGesture] setDelegate:self];
+	[[self resetTapGesture] setEnabled:NO];
+	
+	_resetPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
+	[[self resetPanGesture] setCancelsTouchesInView:YES];
+	[[self panGesture] setDelegate:self];
+	[[self resetPanGesture] setEnabled:NO];
+	
+	[[self mainView] addGestureRecognizer:[self resetTapGesture]];
+	[[self mainView] addGestureRecognizer:[self resetPanGesture]];
 	
 	_panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
 	[_panGesture setCancelsTouchesInView:YES];
@@ -597,6 +613,26 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	}
 	
 	return NO;
+}
+
+- (void)updateGestures {
+	if ([self resetGestures] == 0) {
+		[[[self mainViewController] view] setUserInteractionEnabled:YES];
+		[[self resetPanGesture] setEnabled:NO];
+		[[self resetTapGesture] setEnabled:NO];
+	} else {
+		BOOL isCenter = [self anchoredToSide] == ADAnchorSideCenter;
+		
+		//set enabled when we are anchored to the center
+		[[[self mainViewController] view] setUserInteractionEnabled:isCenter];
+		
+		if ([self resetGestures] & ADResetGestureTap) {
+			[[self resetTapGesture] setEnabled:!isCenter];
+		}
+		if ([self resetGestures] & ADResetGesturePan) {
+			[[self resetPanGesture] setEnabled:!isCenter];
+		}
+	}
 }
 
 #pragma mark - Laying out
@@ -1032,6 +1068,8 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 			[self rightViewDidDisappear];
 			[self leftViewDidDisappear];
 		}
+		
+		[self updateGestures];
 		
 		if (completion) {
 			completion();

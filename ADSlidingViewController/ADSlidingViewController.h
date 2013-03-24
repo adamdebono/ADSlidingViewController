@@ -41,6 +41,11 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 	ADUndersidePersistencyTypeAlways = 2
 };
 
+typedef NS_OPTIONS(NSInteger, ADResetGesture) {
+	ADResetGestureTap = 1 << 0,
+	ADResetGesturePan = 1 << 1
+};
+
 /* Delegate */
 @class ADSlidingViewController;
 @protocol ADSlidingViewControllerDelegate <NSObject>
@@ -166,8 +171,12 @@ typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
  
  NOTE that the resetTapGesture and panGesture will not override everything, such as scroll views. If you wish to have the main view interaction disabled when anchored, you will need to do it manually using the delegate functions.
  */
-@property (nonatomic, readonly) UITapGestureRecognizer *resetTapGesture;
 @property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
+
+/*
+ Set the ways to reset. Setting any will disable user interaction on the main view.
+ */
+@property (nonatomic) ADResetGesture resetGestures;
 
 /*
  Returns YES if the view is visible
