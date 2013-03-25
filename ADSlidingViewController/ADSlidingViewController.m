@@ -27,9 +27,6 @@
 #   define NSLog(...)
 #endif
 
-//ALog() always
-#define ALog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
-
 #import <QuartzCore/QuartzCore.h>
 
 #import "ADSlidingViewController.h"
