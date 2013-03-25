@@ -54,6 +54,7 @@
 /* Begin PBXFileReference section */
 		A263526E15EE493D0061D9A8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A282675515DBB7FC003E9A43 /* Readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.md; sourceTree = "<group>"; };
+		A28548E816FFD12600663073 /* License.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
 		A295AA1C16043A370083EAC3 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A2C5264C15CA8166007DB2B9 /* libADSlidingViewController.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libADSlidingViewController.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C5264F15CA8166007DB2B9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -109,6 +110,7 @@
 			children = (
 				A295AA1C16043A370083EAC3 /* Default-568h@2x.png */,
 				A282675515DBB7FC003E9A43 /* Readme.md */,
+				A28548E816FFD12600663073 /* License.txt */,
 				A2C5265115CA8166007DB2B9 /* ADSlidingViewController */,
 				A2C5266915CA81DF007DB2B9 /* ADSlidingViewControllerDemo */,
 				A2C5264E15CA8166007DB2B9 /* Frameworks */,
