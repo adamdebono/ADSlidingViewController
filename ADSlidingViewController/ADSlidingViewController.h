@@ -23,194 +23,348 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-/* Anchor Side */
+/**
+ * @abstract Specifies the position of the mainViewController.
+ * @const ADAnchorSideLeft Where the mainViewController is to the left of the
+ * screen, showing the rightViewController.
+ * @const ADAnchorSideCenter Where the mainViewController is in the center.
+ * Neither the left or right view controllers will be visible
+ * @const ADAnchorSideRight Where teh mainViewController is to the right of the
+ * screen, showing the leftViewController.
+ */
 typedef NS_ENUM(NSInteger, ADAnchorSide) {
 	ADAnchorSideLeft = 0,
 	ADAnchorSideCenter = 1,
 	ADAnchorSideRight = 2
 };
 
-/* Anchor Width Type */
+/**
+ * @abstract Specifies how the width of an under view controller is calculated.
+ * @const ADAnchorWidthTypePeek The anchor width would specify how far the
+ * mainViewController 'peeks' onto the screen, and the under view width is the
+ * remaining Space.
+ * @const ADAnchorWidthTypeReveal The anchor width specifies how wide the under
+ * view controller is.
+ */
 typedef NS_ENUM(NSInteger, ADAnchorWidthType) {
 	ADAnchorWidthTypePeek = 0,
 	ADAnchorWidthTypeReveal = 1
 };
 
-/* Main Anchor Type */
+/**
+ * @abstract Specifies how the mainViewController reacts when panning/anchoring
+ * @const ADMainAnchorTypeSlide The mainViewController slides across the screen.
+ * @const ADMainAnchorTypeResize The mainViewController resizes to fit, so that
+ * it is pinned to an underViewController on one side, and the opposite side of
+ * the screen.
+ */
 typedef NS_ENUM(NSInteger, ADMainAnchorType) {
 	ADMainAnchorTypeSlide = 0,
 	ADMainAnchorTypeResize = 1
 };
 
-/* Under Layout Type */
+/**
+ * @abstract Specifies how an under view controller reacts when
+ * panning/anchoring.
+ * @const ADUnderAnchorTypeUnderneath The under view remains pinned to the side
+ * of the screen.
+ * @const ADUnderAnchorTypeSlide The under view remains pinned to the
+ * mainViewController.
+ */
 typedef NS_ENUM(NSInteger, ADUnderAnchorType) {
 	ADUnderAnchorTypeUnderneath = 0,
 	ADUnderAnchorTypeSlide = 1
 };
 
-/* Underside Persitency */
+/**
+ * @abstract Specifies whether to leave one under view controller always visble
+ * in either landscape or both orientations.
+ * @const ADUndersidePersistencyTypeNone The mainViewController takes up the
+ * whole screen when anchored to the center.
+ * @const ADUndersidePersistencyTypeLandscape An under view controller can
+ * always be seen in landscape.
+ * @const ADUndersidePersistencyTypeAlways An under view controller can always
+ * be seen.
+ */
 typedef NS_ENUM(NSInteger, ADUndersidePersistencyType) {
 	ADUndersidePersistencyTypeNone = 0,
 	ADUndersidePersistencyTypeLandscape = 1,
 	ADUndersidePersistencyTypeAlways = 2
 };
 
+/**
+ * @abstract Specifies which reset gestures to use.
+ * @discussion Reset gestures are used to re-anchor the main view to the center.
+ * 
+ * Having either of these set will automatically disable user
+ * interaction on the main view (except for these gestures) when the
+ * mainViewController is anchored to either side.
+ *
+ * You may specify both reset gestures by using setting this to
+ * ADRestGestureTap|ADResetGesturePan
+ * @const ADResetGestureTap Allow the mainViewController to be reset by tapping
+ * on it.
+ * @const ADResetGesturePan Allow the mainViewController to be reset by panning
+ * (dragging) it.
+ */
 typedef NS_OPTIONS(NSInteger, ADResetGesture) {
 	ADResetGestureTap = 1 << 0,
 	ADResetGesturePan = 1 << 1
 };
 
-/* Delegate */
+/**
+ * @abstract Provides a listener interface for events triggered by an
+ * ADSlidingViewController
+ */
 @class ADSlidingViewController;
 @protocol ADSlidingViewControllerDelegate <NSObject>
 @optional
 
-/*
- Sent to the delegate just before the mainViewController begins sliding.
- 
- NOTE: this is called AFTER the pan gesture is complete.
- 
- @param ADSlidingViewController	slidingViewController	The controller that sent the message.
- @param ADAnchorSide			side					The side about to anchor to.
- @param NSTimeInterval			duration				The duration of the pending animation, in seconds.
+/**
+ * @abstract Called just before the mainViewController begins sliding.
+ * @discussion If the anchoring is performed through the pan gesture, this will
+ * be called when the pan gesture completes (when the user lifts their finger)
+ * @param slidingViewController The controller that sent the message.
+ * @param side The side about to anchor to.
+ * @param duration The duration of the pending animation, in seconds.
  */
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController willAnchorToSide:(ADAnchorSide)side duration:(NSTimeInterval)duration;
-/*
- Sent to the delegate just before performing the slide animation.
- 
- This is called from within the animation block used to slide the view. By the time this method has been called, the view manipulation has been calculated and set.
- 
- @param ADSlidingViewController	slidingViewController	The controller that sent the message.
- @param ADAnchorSide			side					The side about to anchor to.
- @param NSTimeInterval			duration				The duration of the pending animation, in seconds.
+
+/**
+ * @abstract Called just before performing the slide animation.
+ * @discussion This is called from within the animation block used to slide the
+ * view, so any view manipulation that causes implicit animations performed
+ * within the delegate function will be animated using UIView animation.
+ * 
+ * By the time this method has been called, the view manipulation has been
+ * calculated and set.
+ * @param slidingViewController The controller that sent the message.
+ * @param side The side about to anchor to.
+ * @param duration The duration of the pending animation, in seconds.
  */
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController willAnimateAnchorToSide:(ADAnchorSide)side duration:(NSTimeInterval)duration;
-/*
- Sent to the delegate after the mainViewController has finished sliding.
- 
- @param ADSlidingViewController	slidingViewController	The controller that sent the message.
- @param ADAnchorSide			side					The side just anchored to.
+
+/**
+ * @abstract Called delegate after the mainViewController has finished it's 
+ * sliding animations.
+ * @param slidingViewController The controller that sent the message.
+ * @param side The side just anchored to.
  */
 - (void)ADSlidingViewController:(ADSlidingViewController *)slidingViewController didAnchorToSide:(ADAnchorSide)side;
 
+/**
+ * @abstract Called as the pan gesture begins.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerPanGestureDidActivate:(ADSlidingViewController *)slidingViewController;
 
+/**
+ * @abstract Called as the left under view is about to show.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerWillShowLeftView:(ADSlidingViewController *)slidingViewController;
+/**
+ * @abstract Called as the left under view has shown.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerDidShowLeftView:(ADSlidingViewController *)slidingViewController;
+/**
+ * @abstract Called as the left under view is about to hide.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerWillHideLeftView:(ADSlidingViewController *)slidingViewController;
+/**
+ * @abstract Called as the left under view has hidden.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerDidHideLeftView:(ADSlidingViewController *)slidingViewController;
 
+/**
+ * @abstract Called as the right under view is about to show.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerWillShowRightView:(ADSlidingViewController *)slidingViewController;
+/**
+ * @abstract Called as the right under view has shown.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerDidShowRightView:(ADSlidingViewController *)slidingViewController;
+/**
+ * @abstract Called as the right under view is about to hide.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerWillHideRightView:(ADSlidingViewController *)slidingViewController;
+/**
+ * @abstract Called as the right under view has hidden.
+ * @param slidingViewController The controller that sent the message.
+ */
 - (void)slidingViewControllerDidHideRightView:(ADSlidingViewController *)slidingViewController;
 
 @end
 
-
+/**
+ * @abstract An iOS component used to display a main view controller, and two
+ * view controllers hidden underneath it.
+ */
 @interface ADSlidingViewController : UIViewController <UIGestureRecognizerDelegate>
 
+/**
+ * @abstract The delegate to receive events sent from an instance.
+ */
 @property (nonatomic, weak) id<ADSlidingViewControllerDelegate> delegate;
 
-/* The View Controllers */
+/**
+ * @abstract The view controller in the center of the screen.
+ */
 @property (nonatomic) UIViewController *mainViewController;
+/**
+ * @abstract The under view controller on the left of the screen.
+ */
 @property (nonatomic) UIViewController *leftViewController;
+/**
+ * @abstract The under view controller on the right of the screen.
+ */
 @property (nonatomic) UIViewController *rightViewController;
 
 
-/*
- Left and Right Anchor Widths
- Defines the distance of anchoring in points.
- 
- See Anchor Width Type.
+/**
+ * @abstract Specifies the anchor width for the leftViewController.
+ * @discussion See ADAnchorWidthType.
  */
 @property (nonatomic) CGFloat leftViewAnchorWidth;
+/**
+ * @abstract Specifies the anchor width for the rightViewController.
+ * @discussion See ADAnchorWidthType.
+ */
 @property (nonatomic) CGFloat rightViewAnchorWidth;
 
-/*
- Left and Right Anchor Layout
- Defines what the anchor width is relative to.
- 
- ADAnchorWidthTypePeek: Width defines the amount of main view controller left on the screen.
- ADAnchorWidthTypeReveal: Width defines the amount of under view controller (right or left) shown on screen.
+/**
+ * @abstract Specifies the anchor width type for the leftViewController.
+ * @discussion See ADAnchorWidthType.
  */
 @property (nonatomic) ADAnchorWidthType leftViewAnchorWidthType;
+/**
+ * @abstract Specifies the anchor width type for the rightViewController.
+ * @discussion See ADAnchorWidthType.
+ */
 @property (nonatomic) ADAnchorWidthType rightViewAnchorWidthType;
 
-/*
- Left and Right Main Anchor Type.
- Defines how the main view behaves when moved.
- 
- ADMainAnchorTypeSlide: The main view slides across, so part of it is on screen.
- ADMainAnchorTypeResize: The main view resizes, with the left or right edge staying aligned to the screen edge.
+/**
+ * @abstract Specifies the anchoring type for the mainViewController when
+ * the leftViewController is visible (i.e. when anchoring to the right)
+ * @discussion See ADMainAnchorType.
  */
 @property (nonatomic) ADMainAnchorType leftMainAnchorType;
+/**
+ * @abstract Specifies the anchoring type for the mainViewController when
+ * the rightViewController is visible (i.e. when anchoring to the left)
+ * @discussion See ADMainAnchorType.
+ */
 @property (nonatomic) ADMainAnchorType rightMainAnchorType;
 
-/*
- Left and Right Under Anchor Type.
- Defines how the left and right views behave when moved.
- 
- ADUnderAnchorTypeUnderneath: The view is aligned to its side of the screen, and the main view moves above it.
- ADUnderAnchorTypeSlide: The view is aligned to one side of the main view, and slides along with it when moved.
+/**
+ * @abstract Specifies the anchoring type for the leftViewController
+ * @discussion See ADUnderAnchorType.
  */
 @property (nonatomic) ADUnderAnchorType leftUnderAnchorType;
+/**
+ * @abstract Specifies the anchoring type for the rightViewController
+ * @discussion See ADUnderAnchorType.
+ */
 @property (nonatomic) ADUnderAnchorType rightUnderAnchorType;
 
-/*
- Underside Persistency Type.
- Defines whether an under view should always be shown.
- 
- At least one under view must exist.
- Using ADMainAnchorTypeResize behaves unpredictably and is not supported.
- 
- ADUndersidePersistencyTypeNone: The under views are only shown when the main view is moved (or resized) aside.
- ADUndersidePersistencyTypeLandscape: An under view is always shown in landscape, but behaves normally in portrait.
- ADUndersidePersistencyTypeAlways: An under view is always shown.
+/**
+ * @abstract Specifies the underside persistency type.
+ * @discussion See ADUndersidePersistencyType.
  */
 @property (nonatomic) ADUndersidePersistencyType undersidePersistencyType;
 
-/*
- Returns the side that the main view is currently anchored to
+/**
+ * @abstract Set to the side that the mainViewController is currently anchored
+ * to.
+ * @discussion When a pan gesture is in use, this property will remain where the
+ * mainViewController was before the gesture began.
  */
 @property (nonatomic, readonly) ADAnchorSide anchoredToSide;
 
-/*
- Set to YES to add a shadow under the main view.
+/**
+ * @abstract Specifies whether a shadow will be shown underneath the top view.
+ * @discussion Shadows usually cause a performance hit, and especially on older
+ * devices can create considerable lag, lowering frame rates. If you are
+ * experiencing lag, try turning off shadows.
  */
 @property (nonatomic) BOOL showTopViewShadow;
 
-/*
- Gestures
- 
- NOTE that the resetTapGesture and panGesture will not override everything, such as scroll views. If you wish to have the main view interaction disabled when anchored, you will need to do it manually using the delegate functions.
+/**
+ * @abstract The gesture which controls the panning of the main view.
+ * @discussion Add this to whatever view you want the gesture to be enabled on.
+ * 
+ * Note that a gesture can only be added to a single view.
  */
 @property (nonatomic, readonly) UIPanGestureRecognizer *panGesture;
 
-/*
- Set the ways to reset. Setting any will disable user interaction on the main view.
+/**
+ * @abstract Set the ways to reset the mainViewController from being anchored to
+ * a side.
+ * @discussion See ADResetGesture
  */
 @property (nonatomic) ADResetGesture resetGestures;
 
-/*
- Returns YES if the view is visible
+/**
+ * @abstract Determines whether the leftViewController is visible
+ * @return
+ *		YES if the leftViewController is visible
  */
 - (BOOL)leftViewShowing;
+/**
+ * @abstract Determines whether the rightViewController is visible
+ * @return
+ *		YES if the rightViewController is visible
+ */
 - (BOOL)rightViewShowing;
 
-/*
- Anchor the top view to a given side.
- 
- @param ADAnchorSide side		The side you wish to anchor to
- @param BOOL animated			Whether or not to animate the movement.
- @param void(^)() animations	A block which is run inside the animation block. Any view manipulation that can cause implicit animations will be animated.
- @param void(^)() completion	A block to run on completion. Can be NULL.
+/**
+ * @abstract Anchor the top view to a given side.
+ * @param side
+ *		The side you wish to anchor to
  */
 - (void)anchorTopViewTo:(ADAnchorSide)side;
+/**
+ * @abstract Anchor the top view to a given side.
+ * @param side
+ *		The side you wish to anchor to
+ * @param animated
+ *		Whether or not to animate the movement.
+ */
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated;
+/**
+ * @abstract Anchor the top view to a given side.
+ * @param side
+ *		The side you wish to anchor to
+ * @param animated
+ *		Whether or not to animate the movement.
+ * @param animations
+ *		A block which is run inside the animation block. Any view
+ * manipulation that causes implicit animations performed using UIView
+ * animation. Can be NULL.
+ * @param completion
+ *		A block to run on completion. Can be NULL.
+ */
 - (void)anchorTopViewTo:(ADAnchorSide)side animated:(BOOL)animated animations:(void (^)())animations completion:(void(^)())completion;
 
+/**
+ * @abstract Enable or disable logging.
+ * @discussion Logs are created using NSLog(), and are only performed in DEBUG
+ * mode.
+ * @param enabled
+ *		Pass NO to disable logs.
+ */
 + (void)setLoggingEnabled:(BOOL)enabled;
+/**
+ * @abstract Check if logging is enabled.
+ * @return
+ *		YES if logging is enabled.
+ */
 + (BOOL)isLoggingEnabled;
 
 @end

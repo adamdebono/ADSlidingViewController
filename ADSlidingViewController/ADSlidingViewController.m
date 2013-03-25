@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-//Only NSLog() in DEBUG mode
+//Only NSLog() in DEBUG mode, if logging is enabled
 #if DEBUG
 #   define NSLog(fmt, ...) if([ADSlidingViewController isLoggingEnabled]){NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);}
 #else
@@ -41,7 +41,6 @@
 		}
 		viewController = [viewController parentViewController];
 	}
-	
 	return nil;
 }
 @end
