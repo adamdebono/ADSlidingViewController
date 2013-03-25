@@ -1,6 +1,4 @@
-# Another Sliding View Controller #
-
-Based on ECSlidingViewController
+# ADSlidingViewController #
 
 ## Features ##
 
