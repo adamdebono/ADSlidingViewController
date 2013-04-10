@@ -36,7 +36,7 @@ Once you have got the source, you can install the component in two ways.
 
 1. Drag ADSlidingViewController.h and .m into your project.
 2. Add QuartzCore to 'Link Binary With Libraries' in your target's 'Build Phases' (If not already)
-3. If you're not using ARC, add -f-objc-arc to ADSlidingViewController.h's compiler flags. (In 'Build Phases' -> 'Compile Sources'
+3. If you're not using ARC, add -f-objc-arc to ADSlidingViewController.m's compiler flags. (In 'Build Phases' -> 'Compile Sources'
 
 ## Using ADSlidingViewController ##
 
