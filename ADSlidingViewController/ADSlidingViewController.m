@@ -105,9 +105,11 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	NSLog();
 	
 	//state restoration
-	[self setRestorationIdentifier:kADStateRestorationIdentifier];
-	[self setRestorationClass:[self class]];
-		
+	if ([self respondsToSelector:@selector(setRestorationIdentifier:)]) {
+        [self setRestorationIdentifier:kADStateRestorationIdentifier];
+        [self setRestorationClass:[self class]];
+	}
+	
 	/* Setup Default Values */
 	_leftViewAnchorWidth = kADDefaultAnchorAmount;
 	_rightViewAnchorWidth = kADDefaultAnchorAmount;
