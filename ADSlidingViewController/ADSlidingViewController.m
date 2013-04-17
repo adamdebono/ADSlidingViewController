@@ -275,7 +275,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)viewDidAppear:(BOOL)animated {
 	NSLog();
 	
-	[super viewWillAppear:animated];
+	[super viewDidAppear:animated];
 	
 	[self updateLayout];
 }
