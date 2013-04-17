@@ -275,7 +275,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 - (void)viewDidAppear:(BOOL)animated {
 	NSLog();
 	
-	[super viewWillAppear:animated];
+	[super viewDidAppear:animated];
 	
 	[self updateLayout];
 }
@@ -878,12 +878,10 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 		}
 	}
 	
-	if (!CGSizeEqualToSize([[self mainView] frame].size, mainViewFrame.size)) {
-		CGRect shadowFrame = mainViewFrame;
-		shadowFrame.origin = CGPointZero;
-		CGPathRef shadowPath = CGPathCreateWithRect(shadowFrame, NULL);
-		[[[self mainView] layer] setShadowPath:shadowPath];
-	}
+	CGRect shadowFrame = mainViewFrame;
+	shadowFrame.origin = CGPointZero;
+	CGPathRef shadowPath = CGPathCreateWithRect(shadowFrame, NULL);
+	[[[self mainView] layer] setShadowPath:shadowPath];
 	
 	[[self mainView] setFrame:mainViewFrame];
 	
