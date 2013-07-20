@@ -238,7 +238,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	
 	_resetPanGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureActivated:)];
 	[[self resetPanGesture] setCancelsTouchesInView:YES];
-	[[self panGesture] setDelegate:self];
+	[[self resetPanGesture] setDelegate:self];
 	[[self resetPanGesture] setEnabled:NO];
 	
 	[[self mainView] addGestureRecognizer:[self resetTapGesture]];
