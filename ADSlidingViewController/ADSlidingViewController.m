@@ -446,6 +446,12 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 	}
 }
 
+- (void)setResetGestures:(ADResetGesture)resetGestures {
+	_resetGestures = resetGestures;
+	
+	[self updateGestures];
+}
+
 #pragma mark - View Information
 
 - (BOOL)leftViewShowing {
@@ -628,7 +634,7 @@ static const UIViewAutoresizing kRightSideAutoResizing = UIViewAutoresizingFlexi
 }
 
 - (void)updateGestures {
-	if ([self resetGestures] == 0) {
+	if ([self resetGestures] == 0 || [self checkUndersidePersistency]) {
 		[[[self mainViewController] view] setUserInteractionEnabled:YES];
 		[[self resetPanGesture] setEnabled:NO];
 		[[self resetTapGesture] setEnabled:NO];
